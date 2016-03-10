@@ -131,29 +131,30 @@ class SpaceMap:
     #Methods
     #This method draws the background of the map by displaying each element of self._map at the
     #correct coordinates and with the chosen scaling
-    def drawMap(self, window:pygame.display, units:list, rangeType:str="move"):
+    def drawMap(self, window:pygame.display, units:list=None, rangeType:str="move", scale:tuple=(200,200), correction:tuple=(0,0)):
         hCount = 0
         for array in self._map:
             vCount = 0
             for element in array:
                 gridTile = self.grid.grids['default']
-                coordinates = (hCount*self._scale[0],vCount*self._scale[1])
+                coordinates = (hCount*scale[0]+correction[0],vCount*scale[1]+correction[1])
                 #Scales assets only if not displayed with their original resolution
-                if self.scale != self._TILE_SIZE:
-                    element = pygame.transform.scale(element,self.scale)
-                    gridTile = pygame.transform.scale(gridTile,self.scale)
+                if scale != self._TILE_SIZE:
+                    element = pygame.transform.scale(element,scale)
+                    gridTile = pygame.transform.scale(gridTile,scale)
                 window.blit(element,coordinates)
                 #Check if a unit is selected and if so, activate the tactical grids
-                for unit in units:
-                    if unit.selected:
-                        #Check if the tile is within unit move range.
-                        if unit.inRange(coordinates,self.scale,rangeType):
-                            gridTile = self.grid.grids[rangeType]
+                if units:
+                    for unit in units:
+                        if unit.selected:
+                            #Check if the tile is within unit move range.
+                            if unit.inRange(coordinates,scale,rangeType):
+                                gridTile = self.grid.grids[rangeType]
 
-                        #Scales assets only if not displayed with their original resolution
-                        if self.scale != self._TILE_SIZE:
-                            gridTile = pygame.transform.scale(gridTile,self.scale)
-                        window.blit(gridTile,coordinates)
+                            #Scales assets only if not displayed with their original resolution
+                            if scale != self._TILE_SIZE:
+                                gridTile = pygame.transform.scale(gridTile,scale)
+                            window.blit(gridTile,coordinates)
                 vCount += 1
             hCount += 1
 
@@ -269,6 +270,8 @@ class SpaceMap:
 
             #Showing interface
             self._interface.show(window)
+            #show minimap
+            self.drawMap(window, self._unitManager.units,"move",(15,15),(int(window.get_width()*5/6),int(window.get_height()*6/7)))
 
             #screen update
             pygame.display.flip()
