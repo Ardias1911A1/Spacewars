@@ -31,7 +31,7 @@ class SpaceMap:
         self._grid = Grid()
 
         self._unitManager = UnitManager()
-        self._interface = Interface()
+        self._interface = Interface(self._unitManager.units)
 
         self._map = []
         #Fills a map with tiles taken randomly from the tileset according to the dimensions of the map.
@@ -278,6 +278,7 @@ class SpaceMap:
             #show minimap
             miniMapPosition = (int(resolution[0]*7/8),int(resolution[1]*5/6))
 
+            #Making sure the minimap will not go out of screen
             maxVertSize = self._interface.bottomInterface.get_height()-10
             maxHorSize = (self._interface.bottomInterface.get_width()/12)
 
@@ -285,6 +286,7 @@ class SpaceMap:
             mapHorTileCount = len(self.mapping[0])
             miniMapTileSize = (int(maxHorSize/mapHorTileCount),int(maxVertSize/mapVertTileCount))
 
+            #Choose the maximum size of the tiles by checking if width is bigger than height or opposite
             if miniMapTileSize[0] > miniMapTileSize[1]:
                 miniMapTileSize = (miniMapTileSize[1],miniMapTileSize[1])
             else:
