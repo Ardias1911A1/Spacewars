@@ -277,11 +277,21 @@ class SpaceMap:
             self._interface.show(window)
             #show minimap
             miniMapPosition = (int(resolution[0]*7/8),int(resolution[1]*5/6))
-            screenRatio = int(resolution[0]/resolution[1])
-            miniMapTileSize = (int(resolution[0]/100),int(resolution[0]/100))
-            miniMapTileSizeOn2 = (int(miniMapTileSize[0]/2),int(miniMapTileSize[1]/2))
+
+            maxVertSize = self._interface.bottomInterface.get_height()-10
+            maxHorSize = (self._interface.bottomInterface.get_width()/12)
+
             mapVertTileCount = len(self.mapping)
             mapHorTileCount = len(self.mapping[0])
+            miniMapTileSize = (int(maxHorSize/mapHorTileCount),int(maxVertSize/mapVertTileCount))
+
+            if miniMapTileSize[0] > miniMapTileSize[1]:
+                miniMapTileSize = (miniMapTileSize[1],miniMapTileSize[1])
+            else:
+                miniMapTileSize = (miniMapTileSize[0],miniMapTileSize[0])
+
+            miniMapTileSizeOn2 = (int(miniMapTileSize[0]/2),int(miniMapTileSize[1]/2))
+
             sizeFactor = ((mapHorTileCount*miniMapTileSize[0])/(mapHorTileCount*self.scale[0]) , (mapVertTileCount*miniMapTileSize[1])/(mapVertTileCount*self.scale[1]))
 
             self.drawMap(window, None,rangeType,miniMapTileSize,miniMapPosition)
