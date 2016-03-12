@@ -23,7 +23,7 @@ class SpaceMap:
         self._height = len(mapping)
         self._TILE_SIZE = (200,200)
         self._scaling = 1.0
-        self._scale = (self._TILE_SIZE[0]*self._scaling,self._TILE_SIZE[1]*self._scaling)
+        self._scale = (int(self._TILE_SIZE[0]*self._scaling),int(self._TILE_SIZE[1]*self._scaling))
 
         self._EMPTY_SPACE_TILESET = Tileset("Empty_space","ressources/tilesets/space/emptySpace.png",self._TILE_SIZE)
         self._ASTEROIDS_TILESET = Tileset("Asteroids","ressources/tilesets/space/asteroids.png",self._TILE_SIZE)
@@ -279,15 +279,16 @@ class SpaceMap:
             miniMapPosition = (int(resolution[0]*7/8),int(resolution[1]*5/6))
             screenRatio = int(resolution[0]/resolution[1])
             miniMapTileSize = (int(resolution[0]/100),int(resolution[0]/100))
-            mapVertTileCount = len(self.mapping[0])
-            mapHorTileCount = len(self.mapping[1])
+            miniMapTileSizeOn2 = (int(miniMapTileSize[0]/2),int(miniMapTileSize[1]/2))
+            mapVertTileCount = len(self.mapping)
+            mapHorTileCount = len(self.mapping[0])
+            sizeFactor = ((mapHorTileCount*miniMapTileSize[0])/(mapHorTileCount*self.scale[0]) , (mapVertTileCount*miniMapTileSize[1])/(mapVertTileCount*self.scale[1]))
 
             self.drawMap(window, self._unitManager.units,rangeType,miniMapTileSize,miniMapPosition)
 
             #unit display on minimap
             for unit in self._unitManager.units:
-                sizeFactor = (int((mapHorTileCount*miniMapTileSize[0])/mapHorTileCount*self.scale[0]) , int((mapVertTileCount*miniMapTileSize[1])/mapVertTileCount*self.scale[1]))
-                position = (int(unit.position[0]*sizeFactor[0]+miniMapPosition[0]),int(unit.position[1]*sizeFactor[1]+miniMapPosition[1]))
-                pygame.draw.circle(window, (200,0,0), position, 2, 0)
+                position = (int(unit.position[0]*sizeFactor[0]+miniMapPosition[0]+miniMapTileSizeOn2[0]),int(unit.position[1]*sizeFactor[1]+miniMapPosition[1]+miniMapTileSizeOn2[1]))
+                pygame.draw.circle(window, (0,0,200), position, 2, 0)
             #screen update
             pygame.display.flip()
