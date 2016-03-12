@@ -148,7 +148,7 @@ class SpaceMap:
                     gridTile = pygame.transform.scale(gridTile,scale)
                 window.blit(element,coordinates)
                 #Check if a unit is selected and if so, activate the tactical grids
-                if units:
+                if units != None:
                     for unit in units:
                         if unit.selected:
                             #Check if the tile is within unit move range.
@@ -284,7 +284,7 @@ class SpaceMap:
             mapHorTileCount = len(self.mapping[0])
             sizeFactor = ((mapHorTileCount*miniMapTileSize[0])/(mapHorTileCount*self.scale[0]) , (mapVertTileCount*miniMapTileSize[1])/(mapVertTileCount*self.scale[1]))
 
-            self.drawMap(window, self._unitManager.units,rangeType,miniMapTileSize,miniMapPosition)
+            self.drawMap(window, None,rangeType,miniMapTileSize,miniMapPosition)
 
             #unit display on minimap
             for unit in self._unitManager.units:
