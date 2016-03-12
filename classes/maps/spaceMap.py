@@ -131,8 +131,12 @@ class SpaceMap:
     #Methods
     #This method draws the background of the map by displaying each element of self._map at the
     #correct coordinates and with the chosen scaling
-    def drawMap(self, window:pygame.display, units:list=None, rangeType:str="move", scale:tuple=(200,200), correction:tuple=(0,0)):
+    def drawMap(self, window:pygame.display, units:list=None, rangeType:str="move", scale:tuple=None, correction:tuple=(0,0)):
         hCount = 0
+
+        if scale == None:
+            scale = self.scale
+
         for array in self._map:
             vCount = 0
             for element in array:
@@ -253,6 +257,7 @@ class SpaceMap:
             #Constructing the background with scaling option
             self.drawMap(window, self._unitManager.units, rangeType)
 
+            #units display
             for unit in self._unitManager.units:
                 #Moving selected unit to destination
                 if unit.position != unit.destination :
@@ -271,7 +276,16 @@ class SpaceMap:
             #Showing interface
             self._interface.show(window)
             #show minimap
-            self.drawMap(window, self._unitManager.units,"move",(15,15),(int(window.get_width()*5/6),int(window.get_height()*6/7)))
+            miniMapPosition = (int(resolution[0]*7/8),int(resolution[1]*5/6))
+            screenRatio = resolution[0]/resolution[1]
+            miniMapTileSize = (int(resolution[0]/100),int(resolution[1]/100*screenRatio))
+            self.drawMap(window, self._unitManager.units,rangeType,miniMapTileSize,miniMapPosition)
 
+            #unit display on minimap
+            for unit in self._unitManager.units:
+                #ATTENTION, revoir le concept <--------------------------
+                sizeFactor = (int((self.mapping[1]*miniMapTileSize[0])/len(self.mapping[1]*self.scale[0])) , int((self.mapping[0]*miniMapTileSize[1])/len(self.mapping[0]*self.scale[1])))
+                position = (int(unit.position[0]*sizeFactor[0]+miniMapPosition[0]),int(unit.position[1]*sizeFactor[1]+miniMapPosition[1]))
+                pygame.draw.circle(window, (200,0,0), position, 2, 0)
             #screen update
             pygame.display.flip()
