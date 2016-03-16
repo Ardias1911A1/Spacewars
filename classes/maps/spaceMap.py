@@ -32,6 +32,7 @@ class SpaceMap:
 
         self._unitManager = UnitManager()
         self._interface = Interface(self._unitManager.units)
+        self._mapAnchorage = (0,0)
 
         self._map = []
         #Fills a map with tiles taken randomly from the tileset according to the dimensions of the map.
@@ -131,8 +132,11 @@ class SpaceMap:
     #Methods
     #This method draws the background of the map by displaying each element of self._map at the
     #correct coordinates and with the chosen scaling
-    def drawMap(self, window:pygame.display, units:list=None, rangeType:str="move", scale:tuple=None, position:tuple=(0,0)):
+    def drawMap(self, window:pygame.display, units:list=None, rangeType:str="move", scale:tuple=None, position:tuple=None):
         hCount = 0
+
+        if position == None:
+            position = self._mapAnchorage
 
         if scale == None:
             scale = self.scale
@@ -169,6 +173,8 @@ class SpaceMap:
         for unit in self._unitManager.units:
             factor.append((unit.position[0]/self.scale[0],unit.position[1]/self.scale[1]))
 
+        mapFactor = (self._mapAnchorage[0]/self.scale[0],self._mapAnchorage[1]/self.scale[1])
+
         if inOrOut == "in":
             self.scaling += 0.2
         else:
@@ -179,6 +185,8 @@ class SpaceMap:
             unit.position = (factor[count][0]*self.scale[0],factor[count][1]*self.scale[1])
             unit.destination = unit.position
             count +=1
+
+        self._mapAnchorage = (mapFactor[0]*self.scale[0],mapFactor[1]*self.scale[1])
 
     #Check if a tile is occupied by another unit
     def isDestinationEmpty(self, destination:tuple):
@@ -192,17 +200,26 @@ class SpaceMap:
         return (int(coordinates[0]/self.scale[0])*self.scale[0],int(coordinates[1]/self.scale[1])*self.scale[1])
 
     #Used to move map around to display off screen parts
-    def moveMap(self, coordinates:tuple, direction:str):
-        move = 10
+    def moveMap(self, direction:str, units:list = None):
         if direction == "up":
-            coordinates = (coordinates[0],coordinates[1]+move)
-        if direction == "down":
-            coordinates = (coordinates[0],coordinates[1]-move)
-        if direction == "left":
-            coordinates = (coordinates[0]+move,coordinates[1])
-        if direction == "right":
-            coordinates = (coordinates[0]-move,coordinates[1])
-        return coordinates
+            move = (0,self.scale[1]/10)
+        elif direction == "down":
+            move = (0,-self.scale[1]/10)
+        elif direction == "left":
+            move = (self.scale[0]/10,0)
+        elif direction == "right":
+            move = (-self.scale[0]/10,0)
+        else:
+            move = (0,0)
+
+        self._mapAnchorage = (self._mapAnchorage[0]+move[0], self._mapAnchorage[1]+move[1])
+
+        if units != None:
+            for unit in units:
+                position = (unit.position[0]+move[0],unit.position[1]+move[1])
+                position = (unit.position[0]+move[0],unit.position[1]+move[1])
+                unit.position = position
+                unit.destination = unit.position
 
     def show(self,  window: pygame.display):
 
@@ -210,7 +227,6 @@ class SpaceMap:
         self._unitManager.addUnit("Empire","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
         self._unitManager.addUnit("Federation","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
 
-        mapAnchorage = (0,0)
         resolution = (window.get_width(),window.get_height())
         spriteSelected = False
         move = False
@@ -225,13 +241,13 @@ class SpaceMap:
             #CHecks if mouse on screen side and if we must move the map
             mousePosition = pygame.mouse.get_pos()
             if mousePosition[1] <= 5:
-                mapAnchorage = self.moveMap(mapAnchorage,"up")
+                self.moveMap("up", self._unitManager.units)
             if mousePosition[1] >= resolution[1]-5:
-                mapAnchorage = self.moveMap(mapAnchorage,"down")
+                self.moveMap("down", self._unitManager.units)
             if mousePosition[0] <= 5:
-                mapAnchorage = self.moveMap(mapAnchorage,"left")
+                self.moveMap("left", self._unitManager.units)
             if mousePosition[0] >= resolution[0]-5:
-                mapAnchorage = self.moveMap(mapAnchorage,"right")
+                self.moveMap("right", self._unitManager.units)
 
             #Events
             for event in pygame.event.get():
@@ -249,6 +265,16 @@ class SpaceMap:
                             index += 1
                     elif event.key == K_r:
                         rangeType = "attack"
+
+                    elif event.key == K_UP:
+                        self.moveMap("up", self._unitManager.units)
+                    elif event.key == K_DOWN:
+                        self.moveMap("down", self._unitManager.units)
+                    elif event.key == K_LEFT:
+                        self.moveMap("left", self._unitManager.units)
+                    elif event.key == K_RIGHT:
+                        self.moveMap("right", self._unitManager.units)
+
                 #Mouse events
                 if event.type == MOUSEBUTTONDOWN:
                     #Wheel up
@@ -280,7 +306,7 @@ class SpaceMap:
                     exit()
 
             #Constructing the background with scaling option
-            self.drawMap(window, self._unitManager.units, rangeType, None, mapAnchorage)
+            self.drawMap(window, self._unitManager.units, rangeType)
 
             #units display
             for unit in self._unitManager.units:
