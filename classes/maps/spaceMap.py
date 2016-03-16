@@ -191,12 +191,18 @@ class SpaceMap:
     def normalizeCoordinatesToGrid(self, coordinates:tuple):
         return (int(coordinates[0]/self.scale[0])*self.scale[0],int(coordinates[1]/self.scale[1])*self.scale[1])
 
+    #Used to move map around to display off screen parts
+    def moveMap(self, coordinates:tuple):
+        coordinates = (coordinates[0]+10,coordinates[1])
+        return coordinates
+
     def show(self,  window: pygame.display):
 
         self._unitManager.addUnit("Empire","Cruser",self._TILE_SIZE)
         self._unitManager.addUnit("Empire","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
         self._unitManager.addUnit("Federation","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
 
+        mapAnchorage = (0,0)
         resolution = (window.get_width(),window.get_height())
         spriteSelected = False
         move = False
@@ -225,6 +231,10 @@ class SpaceMap:
                     elif event.key == K_r:
                         rangeType = "attack"
                 #Mouse events
+                if event.type == MOUSEMOTION:
+                    mousePosition = pygame.mouse.get_pos()
+                    if mousePosition[0] <= 10:
+                        mapAnchorage = self.moveMap(mapAnchorage)
                 if event.type == MOUSEBUTTONDOWN:
                     #Wheel up
                     if event.button == 4:
@@ -255,7 +265,7 @@ class SpaceMap:
                     exit()
 
             #Constructing the background with scaling option
-            self.drawMap(window, self._unitManager.units, rangeType)
+            self.drawMap(window, self._unitManager.units, rangeType, None, mapAnchorage)
 
             #units display
             for unit in self._unitManager.units:
