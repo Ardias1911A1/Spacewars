@@ -192,8 +192,16 @@ class SpaceMap:
         return (int(coordinates[0]/self.scale[0])*self.scale[0],int(coordinates[1]/self.scale[1])*self.scale[1])
 
     #Used to move map around to display off screen parts
-    def moveMap(self, coordinates:tuple):
-        coordinates = (coordinates[0]+10,coordinates[1])
+    def moveMap(self, coordinates:tuple, direction:str):
+        move = 10
+        if direction == "up":
+            coordinates = (coordinates[0],coordinates[1]+move)
+        if direction == "down":
+            coordinates = (coordinates[0],coordinates[1]-move)
+        if direction == "left":
+            coordinates = (coordinates[0]+move,coordinates[1])
+        if direction == "right":
+            coordinates = (coordinates[0]-move,coordinates[1])
         return coordinates
 
     def show(self,  window: pygame.display):
@@ -214,6 +222,17 @@ class SpaceMap:
             background = pygame.Surface(resolution)
             window.blit(background,(0,0))
 
+            #CHecks if mouse on screen side and if we must move the map
+            mousePosition = pygame.mouse.get_pos()
+            if mousePosition[1] <= 5:
+                mapAnchorage = self.moveMap(mapAnchorage,"up")
+            if mousePosition[1] >= resolution[1]-5:
+                mapAnchorage = self.moveMap(mapAnchorage,"down")
+            if mousePosition[0] <= 5:
+                mapAnchorage = self.moveMap(mapAnchorage,"left")
+            if mousePosition[0] >= resolution[0]-5:
+                mapAnchorage = self.moveMap(mapAnchorage,"right")
+
             #Events
             for event in pygame.event.get():
                 #Keyboard events
@@ -231,10 +250,6 @@ class SpaceMap:
                     elif event.key == K_r:
                         rangeType = "attack"
                 #Mouse events
-                if event.type == MOUSEMOTION:
-                    mousePosition = pygame.mouse.get_pos()
-                    if mousePosition[0] <= 10:
-                        mapAnchorage = self.moveMap(mapAnchorage)
                 if event.type == MOUSEBUTTONDOWN:
                     #Wheel up
                     if event.button == 4:
