@@ -11,6 +11,7 @@ from classes.tile_manager.tileset import Tileset
 from classes.units.unitManager import UnitManager
 from classes.units.unit import Unit
 from classes.maps.grid import Grid
+from classes.maps.tile import Tile
 from classes.interfaces.interface import Interface
 import time
 
