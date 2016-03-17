@@ -197,7 +197,10 @@ class SpaceMap:
         return True, None
     #Used to correct given coordinates to a multiple of the scale attribute
     def normalizeCoordinatesToGrid(self, coordinates:tuple):
-        return (int(coordinates[0]/self.scale[0])*self.scale[0],int(coordinates[1]/self.scale[1])*self.scale[1])
+        coordinates = (coordinates[0]-self._mapAnchorage[0],coordinates[1]-self._mapAnchorage[1])
+        xAxis = self.scale[0]*int(coordinates[0]/self.scale[0])+self._mapAnchorage[0]
+        yAxis = self.scale[1]*int(coordinates[1]/self.scale[1])+self._mapAnchorage[1]
+        return (xAxis,yAxis)
 
     #Used to move map around to display off screen parts
     def moveMap(self, direction:str, units:list = None):
