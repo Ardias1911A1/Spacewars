@@ -8,8 +8,8 @@
 import pygame
 
 class Tile:
-    def __init__(self, position:tuple=(0,0), tileType:str=None, image:pygame.surface=None):
-        self._position = position
+    def __init__(self,tileType:str=None, image:pygame.surface=None):
+        self._position = (0,0)
         self._tileType = tileType
         self._image = image
 

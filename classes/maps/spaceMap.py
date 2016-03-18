@@ -41,11 +41,11 @@ class SpaceMap:
             array = []
             for vCount in range(0,self._height):
                 if self._mapping[vCount][hCount] == self._ASTEROIDS_TILESET.tileType:
-                    tile = (self._ASTEROIDS_TILESET.getOneTileAtRandom())
+                    tile = Tile(self._ASTEROIDS_TILESET.tileType,self._ASTEROIDS_TILESET.getOneTileAtRandom())
                 elif self._mapping[vCount][hCount] == self._STATIONS_TILESET.tileType:
-                    tile = (self._STATIONS_TILESET.getOneTileAtRandom())
+                    tile = Tile(self._STATIONS_TILESET.tileType,self._STATIONS_TILESET.getOneTileAtRandom())
                 else:
-                    tile = (self._EMPTY_SPACE_TILESET.getOneTileAtRandom())
+                    tile = Tile(self._EMPTY_SPACE_TILESET.tileType,self._EMPTY_SPACE_TILESET.getOneTileAtRandom())
                 array.append(tile)
             self._map.append(array)
 
@@ -144,14 +144,15 @@ class SpaceMap:
 
         for array in self._map:
             vCount = 0
-            for element in array:
+            for tile in array:
+                tileImage = tile.image
                 gridTile = self.grid.grids['default']
                 coordinates = (hCount*scale[0]+position[0],vCount*scale[1]+position[1])
                 #Scales assets only if not displayed with their original resolution
                 if scale != self._TILE_SIZE:
-                    element = pygame.transform.scale(element,scale)
+                    tileImage = pygame.transform.scale(tileImage,scale)
                     gridTile = pygame.transform.scale(gridTile,scale)
-                window.blit(element,coordinates)
+                window.blit(tileImage,coordinates)
                 #Check if a unit is selected and if so, activate the tactical grids
                 if units != None:
                     for unit in units:
