@@ -356,7 +356,7 @@ class SpaceMap:
 
             #unit display on minimap
             for unit in self._unitManager.units:
-                position = (int(unit.position[0]*sizeFactor[0]+miniMapPosition[0]+miniMapTileSizeOn2[0]),int(unit.position[1]*sizeFactor[1]+miniMapPosition[1]+miniMapTileSizeOn2[1]))
+                position = (int((unit.position[0]-self._mapAnchorage[0])*sizeFactor[0]+miniMapPosition[0]+miniMapTileSizeOn2[0]),int((unit.position[1]-self._mapAnchorage[1])*sizeFactor[1]+miniMapPosition[1]+miniMapTileSizeOn2[1]))
                 if unit.faction == "Empire":
                     pygame.draw.circle(window, (200,0,0), position, 3, 0)
                 elif unit.faction == "Coalition":
