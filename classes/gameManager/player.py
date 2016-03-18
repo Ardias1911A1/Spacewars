@@ -7,10 +7,11 @@
 
 class Player:
     def __init__(self, name:str="Player", faction:str="Empire", commander:str=None, team:int=1):
-        self._name = name
-        self._faction = faction
-        self._commander = commander
-        self._team = team
+        self._name = name
+        self._faction = faction
+        self._commander = commander
+        self._team = team
+        self._active = False
 
     #accessors
     def _get_name(self):
@@ -21,6 +22,8 @@ class Player:
         return self._commander
     def _get_team(self):
         return self._team
+    def _get_active(self):
+        return self._active
 
     #mutators
     def _set_name(self, name:str):
@@ -31,6 +34,8 @@ class Player:
         self._commander = commander
     def _set_team(self, team:int):
         self._team = team
+    def _set_active(self, active:bool):
+        self._active = active
 
     #destructors
     def _del_name(self):
@@ -41,6 +46,8 @@ class Player:
         del self._commander
     def _del_team(self):
         del self._team
+    def _del_active(self):
+        del self._active
 
     #help
     def _help_name(self):
@@ -51,9 +58,19 @@ class Player:
         return "Player commander as string"
     def _help_team(self):
         return "Player team as integer"
+    def _help_active(self):
+        return "Player is active or not as boolean"
 
     #properties
-    name =      property(_get_name,_set_name,_del_name,_help_name)
-    faction =   property(_get_faction,_set_faction,_del_faction,_help_faction)
-    commander = property(_get_commander,_set_commander,_del_commander,_help_commander)
-    team =      property(_get_team,_set_team,_del_team,_help_team)
+    name =      property(_get_name,_set_name,_del_name,_help_name)
+    faction =   property(_get_faction,_set_faction,_del_faction,_help_faction)
+    commander = property(_get_commander,_set_commander,_del_commander,_help_commander)
+    team =      property(_get_team,_set_team,_del_team,_help_team)
+    active =    property(_get_active,_set_active,_del_active,_help_active)
+
+    #Methods
+    def toggleActive(self):
+        if self.active:
+            self.active = False
+        else:
+            self.active = True

@@ -12,6 +12,7 @@ from classes.units.unitManager import UnitManager
 from classes.units.unit import Unit
 from classes.maps.grid import Grid
 from classes.maps.tile import Tile
+from classes.gameManager.player import Player
 from classes.interfaces.interface import Interface
 import time
 
@@ -34,6 +35,11 @@ class SpaceMap:
         self._unitManager = UnitManager()
         self._interface = Interface(self._unitManager.units)
         self._mapAnchorage = (0,0)
+
+        self._players = []
+
+        self._players.append(Player("Player 1","Empire","Ardias",1))
+        self._players.append(Player("Player 2","Coalition","Godrig",2))
 
         self._map = []
         #Fills a map with tiles taken randomly from the tileset according to the dimensions of the map.
@@ -239,6 +245,9 @@ class SpaceMap:
         spriteSelected = False
         move = False
         clock = pygame.time.Clock()
+
+        #Activating first player
+        self._players[0].toggleActive()
 
         while(True):
             rangeType = "move"
