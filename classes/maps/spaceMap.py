@@ -231,6 +231,9 @@ class SpaceMap:
         self._unitManager.addUnit("Empire","Cruser",self._TILE_SIZE)
         self._unitManager.addUnit("Empire","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
         self._unitManager.addUnit("Federation","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
+        self._unitManager.addUnit("Federation","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
+        self._unitManager.addUnit("Coalition","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
+        self._unitManager.addUnit("Coalition","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
 
         resolution = (window.get_width(),window.get_height())
         spriteSelected = False
