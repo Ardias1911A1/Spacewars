@@ -22,7 +22,7 @@ class MainMenu:
         self._title = GAME_TITLE
         self._titleFontSize = 64
         self._titleFontColor = fontColor
-        self._entries = ([False,MAIN_MENU_START_GAME,"start"],[False,MAIN_MENU_OPTIONS,"option"],[False,MAIN_MENU_QUIT,"exit"])
+        self._entries = ([False,MAIN_MENU_START_GAME,"campaign"],[False,MAIN_MENU_OPTIONS,"option"],[False,MAIN_MENU_QUIT,"exit"])
         self._fontSize = 24
         self._fontColor = fontColor
     #Methods

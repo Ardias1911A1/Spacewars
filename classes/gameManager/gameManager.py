@@ -5,12 +5,17 @@
 #This class is used to manage gamemodes, player turn, victory and defeats
 #--------------------------------------------
 
+import pygame
+from pygame.locals import *
 from classes.gameManager.player import Player
+from classes.maps.spaceMap import SpaceMap
+from classes.tile_manager.tileset import Tileset
+from classes.screens.mainMenu import MainMenu
 
 class GameManager:
-    def __init__(self, players:list=None):
+    def __init__(self):
         self._gameModes = ["menu","campaign","skirmish","options","exit"]
-        self._players = players
+        self._players = []
         self._turn = None
 
     #accessors
@@ -53,3 +58,33 @@ class GameManager:
     #Methods
     def add_player(self, name:str="Player",faction:str="Empire",commander:str=None,team:int=1):
         self.player.append(Player(name,faction,commander,team))
+
+    def load(self, window:pygame.display):
+        mainMenu = MainMenu(window)
+        gameMode = self.gameModes[0]
+        exitAction = self.gameModes[len(self.gameModes)-1]
+        running = True
+
+        while(running):
+            if gameMode == self.gameModes[0]:
+                gameMode = mainMenu.show(window)
+            elif gameMode == self.gameModes[1]:
+                mapCode =   [["Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
+                            ["Empty_space","Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
+                            ["Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
+                            ["Empty_space","Empty_space","Empty_space","Empty_space","Stations","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
+                            ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
+                            ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
+                            ["Empty_space","Stations","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
+                            ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"]]
+                gameMap = SpaceMap("P4X-867",mapCode)
+                gameMode = gameMap.show(window)
+                del gameMap
+            elif gameMode == self.gameModes[2]:
+                gameMode = self.gameModes[0]
+            elif gameMode == exitAction:
+                running = False
+
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    exit()
