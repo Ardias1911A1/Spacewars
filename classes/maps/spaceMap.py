@@ -271,7 +271,7 @@ class SpaceMap:
                 #Keyboard events
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        return "menu"
+                        return "mainMenu"
                     elif event.key == K_KP_PLUS:
                         self._unitManager.addUnit("Empire","Frigate",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
                     elif event.key == K_KP_MINUS:

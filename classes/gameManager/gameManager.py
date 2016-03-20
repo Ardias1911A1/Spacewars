@@ -14,7 +14,10 @@ from classes.screens.mainMenu import MainMenu
 
 class GameManager:
     def __init__(self):
-        self._gameModes = ["menu","campaign","skirmish","options","exit"]
+        self._gameModes = dict( mainMenu =  ["mainMenu","Main menu"],
+                                campaign =  ["campaign","Start a new campaign"],
+                                options =   ["options","Options"],
+                                exit =      ["exit","Leave the game"])
         self._players = []
         self._turn = None
 
@@ -27,7 +30,7 @@ class GameManager:
         return self._turn
 
     #mutators
-    def _set_gameModes(self, gameModes:list):
+    def _set_gameModes(self, gameModes:dict):
         self._gameModes = gameModes
     def _set_players(self, players:list):
         self._players = players
@@ -44,7 +47,7 @@ class GameManager:
 
     #help
     def _help_gameModes(self):
-        return "Mode of the game stored as a list of string"
+        return "Mode of the game stored as a dictionary of of list : dict(<key>=['mode id','mode caption'])"
     def _help_players(self):
         return "Players of the game stored as a list of player objects"
     def _help_turn(self):
@@ -60,15 +63,15 @@ class GameManager:
         self.player.append(Player(name,faction,commander,team))
 
     def load(self, window:pygame.display):
-        mainMenu = MainMenu(window)
-        gameMode = self.gameModes[0]
-        exitAction = self.gameModes[len(self.gameModes)-1]
         running = True
+        gameMode = self.gameModes["mainMenu"][0]
 
         while(running):
-            if gameMode == self.gameModes[0]:
+            if gameMode == self.gameModes["mainMenu"][0]:
+                mainMenu = MainMenu(window,self.gameModes)
                 gameMode = mainMenu.show(window)
-            elif gameMode == self.gameModes[1]:
+                del mainMenu
+            elif gameMode == self.gameModes["campaign"][0]:
                 mapCode =   [["Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
                             ["Empty_space","Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
                             ["Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
@@ -80,9 +83,9 @@ class GameManager:
                 gameMap = SpaceMap("P4X-867",mapCode)
                 gameMode = gameMap.show(window)
                 del gameMap
-            elif gameMode == self.gameModes[2]:
-                gameMode = self.gameModes[0]
-            elif gameMode == exitAction:
+            elif gameMode == self.gameModes["options"][0]:
+                gameMode = self.gameModes["mainMenu"][0]
+            elif gameMode == self.gameModes["exit"][0]:
                 running = False
 
             for event in pygame.event.get():
