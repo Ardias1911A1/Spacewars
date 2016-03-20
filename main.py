@@ -3,6 +3,7 @@ from pygame.locals import *
 from classes.tile_manager.tileset import Tileset
 import random
 from classes.screens.mainMenu import MainMenu
+from classes.gameManager.gameManager import GameManager
 from classes.maps.spaceMap import SpaceMap
 from classes.definitions.constants import *
 
@@ -16,7 +17,8 @@ def main():
     pygame.display.set_icon(appIcon)
     pygame.key.set_repeat(10, 10)
     mainMenu = MainMenu(mainWindow)
-    nextAction = "menu"
+    gameManager = GameManager()
+    nextAction = gameManager.gameModes[0]
     running = True
 
     while(running):
