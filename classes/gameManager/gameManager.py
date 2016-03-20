@@ -55,12 +55,12 @@ class GameManager:
 
     #properties
     gameModes = property(_get_gameModes,_set_gameModes,_del_gameModes,_help_gameModes)
-    players = property(_get_players,_set_players,_del_players,_help_players)
-    turn = property(_get_turn,_set_turn,_del_turn,_help_turn)
+    players =   property(_get_players,_set_players,_del_players,_help_players)
+    turn =      property(_get_turn,_set_turn,_del_turn,_help_turn)
 
     #Methods
-    def add_player(self, name:str="Player",faction:str="Empire",commander:str=None,team:int=1):
-        self.player.append(Player(name,faction,commander,team))
+    def addPlayer(self, name:str="Player",faction:str="Empire",commander:str=None,team:int=1):
+        self.players.append(Player(name,faction,commander,team))
 
     def load(self, window:pygame.display):
         running = True
@@ -72,6 +72,9 @@ class GameManager:
                 gameMode = mainMenu.show(window)
                 del mainMenu
             elif gameMode == self.gameModes["campaign"][0]:
+                self.addPlayer("Ardias","Empire",None,1)
+                self.addPlayer("Gorgoroth","Coalition",None,2)
+
                 mapCode =   [["Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
                             ["Empty_space","Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
                             ["Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
@@ -80,7 +83,7 @@ class GameManager:
                             ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
                             ["Empty_space","Stations","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
                             ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"]]
-                gameMap = SpaceMap("P4X-867",mapCode)
+                gameMap = SpaceMap("P4X-867",mapCode,self.players)
                 gameMode = gameMap.show(window)
                 del gameMap
             elif gameMode == self.gameModes["options"][0]:

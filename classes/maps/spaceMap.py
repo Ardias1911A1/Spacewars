@@ -18,7 +18,7 @@ import time
 
 class SpaceMap:
     #constructor
-    def __init__(self, name:str, mapping:str):
+    def __init__(self, name:str, mapping:str, players:Player):
         self._name = name
         self._mapping = mapping
         self._width = len(mapping[0])
@@ -36,7 +36,7 @@ class SpaceMap:
         self._interface = Interface(self._unitManager.units)
         self._mapAnchorage = (0,0)
 
-        self._players = []
+        self._players = players
 
         self._players.append(Player("Player 1","Empire","Ardias",1))
         self._players.append(Player("Player 2","Coalition","Godrig",2))
