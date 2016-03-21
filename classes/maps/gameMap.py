@@ -2,7 +2,7 @@
 #Author: Chappuis Anthony
 #Date: February 2016
 #
-#This class manage the construction of game maps and terrain
+#This class manage the construction of game maps and
 #according parameters and fonctions
 #--------------------------------------------
 import pygame
@@ -16,7 +16,7 @@ from classes.gameManager.player import Player
 from classes.interfaces.interface import Interface
 import time
 
-class SpaceMap:
+class GameMap:
     #constructor
     def __init__(self, name:str, mapping:str, players:Player):
         self._name = name
@@ -33,7 +33,7 @@ class SpaceMap:
         self._grid = Grid()
 
         self._unitManager = UnitManager()
-        self._interface = Interface(self._unitManager.units)
+        self._interface = Interface(self._unitManager.units,self)
         self._mapAnchorage = (0,0)
 
         self._players = players
@@ -388,10 +388,6 @@ class SpaceMap:
 
             #Showing interface
             self._interface.show(window)
-
-            #show minimap
-            miniMapPosition = (int(resolution[0]*7/8),int(resolution[1]*5/6))
-            self.drawMap(window,rangeType,miniMapPosition,True)
 
             #screen update
             pygame.display.flip()

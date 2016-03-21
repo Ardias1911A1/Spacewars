@@ -8,8 +8,7 @@
 import pygame
 from pygame.locals import *
 from classes.gameManager.player import Player
-from classes.maps.spaceMap import SpaceMap
-from classes.tile_manager.tileset import Tileset
+from classes.maps.gameMap import GameMap
 from classes.screens.mainMenu import MainMenu
 
 class GameManager:
@@ -86,7 +85,7 @@ class GameManager:
                             ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
                             ["Empty_space","Stations","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
                             ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"]]
-                gameMap = SpaceMap("P4X-867",mapCode,self.players)
+                gameMap = GameMap("P4X-867",mapCode,self.players)
                 gameMode = gameMap.show(window)
                 del gameMap
             elif gameMode == self.gameModes["options"][0]:
