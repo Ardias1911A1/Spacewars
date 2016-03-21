@@ -7,6 +7,7 @@
 import pygame
 from classes.units.unit import Unit
 from classes.screens.battle import Battle
+from classes.gameManager.player import Player
 
 
 class UnitManager:
@@ -53,16 +54,16 @@ class UnitManager:
     count =      property(_get_count,_set_count, _del_count, _help_count)
 
     #Methods
-    def addUnit(self, faction:str, unitType:str, spriteSize:tuple, position:tuple=(0,0)):
-        health = self._unitRefs[faction][unitType]['health']
-        speed = self._unitRefs[faction][unitType]['speed']
-        ranges = self._unitRefs[faction][unitType]['ranges']
-        spriteset = self._unitRefs[faction][unitType]['spriteset']
-        attackForce = self._unitRefs[faction][unitType]['attackForce']
+    def addUnit(self, player:Player, unitType:str, spriteSize:tuple, position:tuple=(0,0)):
+        health = self._unitRefs[player.faction][unitType]['health']
+        speed = self._unitRefs[player.faction][unitType]['speed']
+        ranges = self._unitRefs[player.faction][unitType]['ranges']
+        spriteset = self._unitRefs[player.faction][unitType]['spriteset']
+        attackForce = self._unitRefs[player.faction][unitType]['attackForce']
 
-        unit = Unit(faction, unitType, health, speed, ranges, spriteset, spriteSize, position, attackForce)
+        unit = Unit(player.faction, unitType, health, speed, ranges, spriteset, spriteSize, position, attackForce)
 
-        self.units.append(unit)
+        player.units.append(unit)
         self.count += 1
 
     def attack(self, window:pygame.display, mapping:list, unit:Unit, target:Unit, scale:tuple):
@@ -78,6 +79,6 @@ class UnitManager:
                     self.removeUnit(index)
                 index += 1
 
-    def removeUnit(self,index:int):
+    def removeUnit(self, player:Player ,index:int):
         del self.units[index]
         self.count -= 1

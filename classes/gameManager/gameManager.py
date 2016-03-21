@@ -19,7 +19,7 @@ class GameManager:
                                 options =   ["options","Options"],
                                 exit =      ["exit","Leave the game"])
         self._players = []
-        self._turn = None
+        self._turn = 0
 
     #accessors
     def _get_gameModes(self):
@@ -61,6 +61,9 @@ class GameManager:
     #Methods
     def addPlayer(self, name:str="Player",faction:str="Empire",commander:str=None,team:int=1):
         self.players.append(Player(name,faction,commander,team))
+
+    def nextTurn(self):
+        self.turn += 1
 
     def load(self, window:pygame.display):
         running = True

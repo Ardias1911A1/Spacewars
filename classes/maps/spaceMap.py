@@ -38,9 +38,6 @@ class SpaceMap:
 
         self._players = players
 
-        self._players.append(Player("Player 1","Empire","Ardias",1))
-        self._players.append(Player("Player 2","Coalition","Godrig",2))
-
         self._map = []
         #Fills a map with tiles taken randomly from the tileset according to the dimensions of the map.
         for hCount in range(0,self._width):
@@ -70,6 +67,8 @@ class SpaceMap:
         return self._scaling
     def _get_grid(self):
         return self._grid
+    def _get_players(self):
+        return self._players
 
     #mutators
     def _set_name(self, name:str):
@@ -93,6 +92,8 @@ class SpaceMap:
 
     def _set_grid(self, grid:Grid):
         self._grid = grid
+    def _set_players(self, players:list):
+        self._players = players
 
     #destructors
     def _del_name(self):
@@ -109,6 +110,8 @@ class SpaceMap:
         del self._scaling
     def _del_grid(self):
         del self._grid
+    def _del_players(self):
+        del self._players
 
     #help
     def _help_name(self):
@@ -126,6 +129,8 @@ class SpaceMap:
         return "Contains the factor used to transform TILE_SIZE to scale which is used to defin images final on screen size"
     def _help_grid(self):
         return "Contains a Grid object responsible for showing the grid range when moving or shooting with a unit"
+    def _help_players(self):
+        return "Contains a list of player objects"
 
     #properties
     name =      property(_get_name, _set_name, _del_name, _help_name)
@@ -135,17 +140,36 @@ class SpaceMap:
     scale =     property(_get_scale, _set_scale, _del_scale, _help_scale)
     scaling =   property(_get_scaling, _set_scaling, _del_scaling, _help_scaling)
     grid =      property(_get_grid, _set_grid, _del_grid, _help_grid)
+    players =   property(_get_players, _set_players, _del_players, _help_players)
 
     #Methods
     #This method draws the background of the map by displaying each element of self._map at the
     #correct coordinates and with the chosen scaling
-    def drawMap(self, window:pygame.display, units:list=None, rangeType:str="move", scale:tuple=None, position:tuple=None):
+    def drawMap(self, window:pygame.display, rangeType:str="move", position:tuple=None, isMiniMap:bool=False):
         hCount = 0
+        tacticalGrid = False
 
-        if position == None:
+        if isMiniMap:
+            #Making sure the minimap will not go out of screen
+            maxVertSize = self._interface.bottomInterface.get_height()-10
+            maxHorSize = (self._interface.bottomInterface.get_width()/12-10)
+
+            mapVertTileCount = len(self.mapping)
+            mapHorTileCount = len(self.mapping[0])
+            miniMapTileSize = (int(maxHorSize/mapHorTileCount),int(maxVertSize/mapVertTileCount))
+
+            #Choose the maximum size of the tiles by checking if width is bigger than height or opposite
+            if miniMapTileSize[0] > miniMapTileSize[1]:
+                miniMapTileSize = (miniMapTileSize[1],miniMapTileSize[1])
+            else:
+                miniMapTileSize = (miniMapTileSize[0],miniMapTileSize[0])
+
+                miniMapTileSizeOn2 = (int(miniMapTileSize[0]/2),int(miniMapTileSize[1]/2))
+
+                sizeFactor = ((mapHorTileCount*miniMapTileSize[0])/(mapHorTileCount*self.scale[0]) , (mapVertTileCount*miniMapTileSize[1])/(mapVertTileCount*self.scale[1]))
+            scale = miniMapTileSize
+        else:
             position = self._mapAnchorage
-
-        if scale == None:
             scale = self.scale
 
         for array in self._map:
@@ -159,27 +183,43 @@ class SpaceMap:
                     tileImage = pygame.transform.scale(tileImage,scale)
                     gridTile = pygame.transform.scale(gridTile,scale)
                 window.blit(tileImage,coordinates)
-                #Check if a unit is selected and if so, activate the tactical grids
-                if units != None:
-                    for unit in units:
-                        if unit.selected:
-                            #Check if the tile is within unit move range.
-                            if unit.inRange(coordinates,scale,rangeType):
-                                gridTile = self.grid.grids[rangeType]
 
-                            #Scales assets only if not displayed with their original resolution
-                            if scale != self._TILE_SIZE:
-                                gridTile = pygame.transform.scale(gridTile,scale)
-                            window.blit(gridTile,coordinates)
+                for player in self.players:
+                    if len(player.units) > 0:
+                        for unit in player.units:
+                            #Check if a unit is selected or drawing the mini map and if so, activate the tactical grids
+                            if unit.selected or isMiniMap:
+                                tacticalGrid = True
+                                #Check if the tile is within unit move range.
+                                if unit.inRange(coordinates,scale,rangeType):
+                                    gridTile = self.grid.grids[rangeType]
+                                    #Scales assets only if not displayed with their original resolution
+                                    if scale != self._TILE_SIZE:
+                                        gridTile = pygame.transform.scale(gridTile,scale)
+
+                            #unit display on minimap
+                            if isMiniMap:
+                                unitPosition = (int((unit.position[0]-self._mapAnchorage[0])*sizeFactor[0]+position[0]+miniMapTileSizeOn2[0]),int((unit.position[1]-self._mapAnchorage[1])*sizeFactor[1]+position[1]+miniMapTileSizeOn2[1]))
+                                if unit.faction == "Empire":
+                                    pygame.draw.circle(window, (200,0,0), unitPosition, 3, 0)
+                                elif unit.faction == "Coalition":
+                                    pygame.draw.circle(window, (0,100,150), unitPosition, 3, 0)
+                                elif unit.faction == "Federation":
+                                    pygame.draw.circle(window, (0,200,100), unitPosition, 3, 0)
+
+                if tacticalGrid:
+                    window.blit(gridTile,coordinates)
                 vCount += 1
             hCount += 1
 
     def zoom(self, inOrOut:str):
         #We have to store the difference of tile size before the scaling
         #in order to correct the sprite's position after the scaling
+
         factor = []
-        for unit in self._unitManager.units:
-            factor.append((unit.position[0]/self.scale[0],unit.position[1]/self.scale[1]))
+        for player in self.players:
+            for unit in player.units:
+                factor.append((unit.position[0]/self.scale[0],unit.position[1]/self.scale[1]))
 
         mapFactor = (self._mapAnchorage[0]/self.scale[0],self._mapAnchorage[1]/self.scale[1])
 
@@ -189,18 +229,20 @@ class SpaceMap:
             self.scaling -= 0.2
 
         count = 0
-        for unit in self._unitManager.units:
-            unit.position = (factor[count][0]*self.scale[0],factor[count][1]*self.scale[1])
-            unit.destination = unit.position
-            count +=1
+        for player in self.players:
+            for unit in player.units:
+                unit.position = (factor[count][0]*self.scale[0],factor[count][1]*self.scale[1])
+                unit.destination = unit.position
+                count +=1
 
         self._mapAnchorage = (mapFactor[0]*self.scale[0],mapFactor[1]*self.scale[1])
 
     #Check if a tile is occupied by another unit
     def isDestinationEmpty(self, destination:tuple):
-        for unit in self._unitManager.units :
-            if destination == unit.position:
-                return False, unit
+        for player in self.players:
+            for unit in player.units :
+                if destination == unit.position:
+                    return False, unit
 
         return True, None
     #Used to correct given coordinates to a multiple of the scale attribute
@@ -211,7 +253,7 @@ class SpaceMap:
         return (xAxis,yAxis)
 
     #Used to move map around to display off screen parts
-    def moveMap(self, direction:str, units:list = None):
+    def moveMap(self, direction:str):
         if direction == "up":
             move = (0,self.scale[1]/10)
         elif direction == "down":
@@ -225,21 +267,19 @@ class SpaceMap:
 
         self._mapAnchorage = (self._mapAnchorage[0]+move[0], self._mapAnchorage[1]+move[1])
 
-        if units != None:
-            for unit in units:
-                position = (unit.position[0]+move[0],unit.position[1]+move[1])
-                position = (unit.position[0]+move[0],unit.position[1]+move[1])
-                unit.position = position
-                unit.destination = unit.position
+        for player in self.players:
+            if len(player.units) > 0:
+                for unit in player.units:
+                    position = (unit.position[0]+move[0],unit.position[1]+move[1])
+                    position = (unit.position[0]+move[0],unit.position[1]+move[1])
+                    unit.position = position
+                    unit.destination = unit.position
 
     def show(self,  window: pygame.display):
 
-        self._unitManager.addUnit("Empire","Cruser",self._TILE_SIZE)
-        self._unitManager.addUnit("Empire","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
-        self._unitManager.addUnit("Federation","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
-        self._unitManager.addUnit("Federation","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
-        self._unitManager.addUnit("Coalition","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
-        self._unitManager.addUnit("Coalition","Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
+        for player in self.players:
+            self._unitManager.addUnit(player,"Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
+            self._unitManager.addUnit(player,"Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
 
         resolution = (window.get_width(),window.get_height())
         spriteSelected = False
@@ -258,13 +298,13 @@ class SpaceMap:
             #CHecks if mouse on screen side and if we must move the map
             mousePosition = pygame.mouse.get_pos()
             if mousePosition[1] <= 5:
-                self.moveMap("up", self._unitManager.units)
+                self.moveMap("up")
             if mousePosition[1] >= resolution[1]-5:
-                self.moveMap("down", self._unitManager.units)
+                self.moveMap("down")
             if mousePosition[0] <= 5:
-                self.moveMap("left", self._unitManager.units)
+                self.moveMap("left")
             if mousePosition[0] >= resolution[0]-5:
-                self.moveMap("right", self._unitManager.units)
+                self.moveMap("right")
 
             #Events
             for event in pygame.event.get():
@@ -273,24 +313,27 @@ class SpaceMap:
                     if event.key == K_ESCAPE:
                         return "mainMenu"
                     elif event.key == K_KP_PLUS:
-                        self._unitManager.addUnit("Empire","Frigate",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
+                        for player in self.players:
+                            if player.active:
+                                self._unitManager.addUnit(player,"Frigate",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
                     elif event.key == K_KP_MINUS:
                         index = 0
-                        for unit in self._unitManager.units:
-                            if unit.selected:
-                                self._unitManager.removeUnit(index)
-                            index += 1
+                        for player in self.players:
+                            for unit in player.units:
+                                if unit.selected:
+                                    self._unitManager.removeUnit(player,index)
+                                index += 1
                     elif event.key == K_r:
                         rangeType = "attack"
 
                     elif event.key == K_UP:
-                        self.moveMap("up", self._unitManager.units)
+                        self.moveMap("up")
                     elif event.key == K_DOWN:
-                        self.moveMap("down", self._unitManager.units)
+                        self.moveMap("down")
                     elif event.key == K_LEFT:
-                        self.moveMap("left", self._unitManager.units)
+                        self.moveMap("left")
                     elif event.key == K_RIGHT:
-                        self.moveMap("right", self._unitManager.units)
+                        self.moveMap("right")
 
                 #Mouse events
                 if event.type == MOUSEBUTTONDOWN:
@@ -301,80 +344,54 @@ class SpaceMap:
                     if event.button == 5:
                         self.zoom("out")
 
-                    for unit in self._unitManager.units:
-                        rect = unit.getUnitRect(self.scale)
-                        #Selecting a unit
-                        if pygame.mouse.get_pressed()[0] and rect.collidepoint(pygame.mouse.get_pos()):
-                            unit.selected = True
-                        #Deselecting a unit
-                        elif pygame.mouse.get_pressed()[0] and not (rect.collidepoint(pygame.mouse.get_pos())):
-                            unit.selected = False
-                        #Right clic on destination for selected unit
-                        if pygame.mouse.get_pressed()[2] and unit.selected:
-                            destination = self.normalizeCoordinatesToGrid(pygame.mouse.get_pos())
-                            target = self.isDestinationEmpty(destination)
-                            if target[0]:
-                                unit.destination = destination
-                            else:
-                                self._unitManager.attack(window,self._mapping,unit,target[1],self.scale)
+                    for player in self.players:
+                        for unit in player.units:
+                            rect = unit.getUnitRect(self.scale)
+                            #Selecting a unit
+                            if pygame.mouse.get_pressed()[0] and rect.collidepoint(pygame.mouse.get_pos()):
+                                unit.selected = True
+                            #Deselecting a unit
+                            elif pygame.mouse.get_pressed()[0] and not (rect.collidepoint(pygame.mouse.get_pos())):
+                                unit.selected = False
+                            #Right clic on destination for selected unit
+                            if pygame.mouse.get_pressed()[2] and unit.selected:
+                                destination = self.normalizeCoordinatesToGrid(pygame.mouse.get_pos())
+                                target = self.isDestinationEmpty(destination)
+                                if target[0]:
+                                    unit.destination = destination
+                                else:
+                                    self._unitManager.attack(window,self._mapping,unit,target[1],self.scale)
 
                 #Misc events
                 if event.type == QUIT:
                     exit()
 
             #Constructing the background with scaling option
-            self.drawMap(window, self._unitManager.units, rangeType)
+            self.drawMap(window, rangeType)
 
             #units display
-            for unit in self._unitManager.units:
-                #Moving selected unit to destination
-                if unit.position != unit.destination :
-                    unit.move(self.scale)
-                else:
-                    unit.idle()
+            for player in self.players:
+                for unit in player.units:
+                    #Moving selected unit to destination
+                    if unit.position != unit.destination :
+                        unit.move(self.scale)
+                    else:
+                        unit.idle()
 
-                #Scales assets only if not displayed with their original resolution
-                if self.scale != self._TILE_SIZE:
-                    sprite = pygame.transform.scale(unit.sprite,self.scale)
-                else:
-                    sprite = unit.sprite
+                    #Scales assets only if not displayed with their original resolution
+                    if self.scale != self._TILE_SIZE:
+                        sprite = pygame.transform.scale(unit.sprite,self.scale)
+                    else:
+                        sprite = unit.sprite
 
-                window.blit(sprite,unit.position)
+                    window.blit(sprite,unit.position)
 
             #Showing interface
             self._interface.show(window)
+
             #show minimap
             miniMapPosition = (int(resolution[0]*7/8),int(resolution[1]*5/6))
-
-            #Making sure the minimap will not go out of screen
-            maxVertSize = self._interface.bottomInterface.get_height()-10
-            maxHorSize = (self._interface.bottomInterface.get_width()/12)
-
-            mapVertTileCount = len(self.mapping)
-            mapHorTileCount = len(self.mapping[0])
-            miniMapTileSize = (int(maxHorSize/mapHorTileCount),int(maxVertSize/mapVertTileCount))
-
-            #Choose the maximum size of the tiles by checking if width is bigger than height or opposite
-            if miniMapTileSize[0] > miniMapTileSize[1]:
-                miniMapTileSize = (miniMapTileSize[1],miniMapTileSize[1])
-            else:
-                miniMapTileSize = (miniMapTileSize[0],miniMapTileSize[0])
-
-            miniMapTileSizeOn2 = (int(miniMapTileSize[0]/2),int(miniMapTileSize[1]/2))
-
-            sizeFactor = ((mapHorTileCount*miniMapTileSize[0])/(mapHorTileCount*self.scale[0]) , (mapVertTileCount*miniMapTileSize[1])/(mapVertTileCount*self.scale[1]))
-
-            self.drawMap(window, None,rangeType,miniMapTileSize,miniMapPosition)
-
-            #unit display on minimap
-            for unit in self._unitManager.units:
-                position = (int((unit.position[0]-self._mapAnchorage[0])*sizeFactor[0]+miniMapPosition[0]+miniMapTileSizeOn2[0]),int((unit.position[1]-self._mapAnchorage[1])*sizeFactor[1]+miniMapPosition[1]+miniMapTileSizeOn2[1]))
-                if unit.faction == "Empire":
-                    pygame.draw.circle(window, (200,0,0), position, 3, 0)
-                elif unit.faction == "Coalition":
-                    pygame.draw.circle(window, (0,100,150), position, 3, 0)
-                elif unit.faction == "Federation":
-                    pygame.draw.circle(window, (0,200,100), position, 3, 0)
+            self.drawMap(window,rangeType,miniMapPosition,True)
 
             #screen update
             pygame.display.flip()
