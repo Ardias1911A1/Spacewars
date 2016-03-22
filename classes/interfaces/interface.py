@@ -11,7 +11,7 @@ from classes.definitions.constants import *
 #from classes.maps.gameMap import GameMap
 
 class Interface:
-    def __init__(self, units:list, miniMap=None):
+    def __init__(self, units:list=None, miniMap=None):
         self._topInterface = pygame.image.load("ressources/interface/topInterface.png").convert_alpha()
         self._bottomInterface = pygame.image.load("ressources/interface/bottomInterface.png").convert_alpha()
         self._miniMap = miniMap

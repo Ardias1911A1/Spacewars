@@ -18,7 +18,7 @@ import time
 
 class GameMap:
     #constructor
-    def __init__(self, name:str, mapping:str, players:Player):
+    def __init__(self, name:str, mapping:str):
         self._name = name
         self._mapping = mapping
         self._width = len(mapping[0])
@@ -35,8 +35,8 @@ class GameMap:
         self._unitManager = UnitManager()
         self._interface = Interface(self._unitManager.units,self)
         self._mapAnchorage = (0,0)
-
-        self._players = players
+        self.players = None
+        self._clock = pygame.time.Clock()
 
         self._map = []
         #Fills a map with tiles taken randomly from the tileset according to the dimensions of the map.
@@ -67,8 +67,6 @@ class GameMap:
         return self._scaling
     def _get_grid(self):
         return self._grid
-    def _get_players(self):
-        return self._players
 
     #mutators
     def _set_name(self, name:str):
@@ -92,8 +90,6 @@ class GameMap:
 
     def _set_grid(self, grid:Grid):
         self._grid = grid
-    def _set_players(self, players:list):
-        self._players = players
 
     #destructors
     def _del_name(self):
@@ -110,8 +106,6 @@ class GameMap:
         del self._scaling
     def _del_grid(self):
         del self._grid
-    def _del_players(self):
-        del self._players
 
     #help
     def _help_name(self):
@@ -129,8 +123,6 @@ class GameMap:
         return "Contains the factor used to transform TILE_SIZE to scale which is used to defin images final on screen size"
     def _help_grid(self):
         return "Contains a Grid object responsible for showing the grid range when moving or shooting with a unit"
-    def _help_players(self):
-        return "Contains a list of player objects"
 
     #properties
     name =      property(_get_name, _set_name, _del_name, _help_name)
@@ -140,7 +132,6 @@ class GameMap:
     scale =     property(_get_scale, _set_scale, _del_scale, _help_scale)
     scaling =   property(_get_scaling, _set_scaling, _del_scaling, _help_scaling)
     grid =      property(_get_grid, _set_grid, _del_grid, _help_grid)
-    players =   property(_get_players, _set_players, _del_players, _help_players)
 
     #Methods
     #This method draws the background of the map by displaying each element of self._map at the
@@ -275,119 +266,38 @@ class GameMap:
                     unit.position = position
                     unit.destination = unit.position
 
-    def show(self,  window: pygame.display):
-
-        for player in self.players:
-            self._unitManager.addUnit(player,"Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
-            self._unitManager.addUnit(player,"Cruser",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
-
+    def show(self,  window: pygame.display, rangeType:str="move", players=None):
+        self._clock.tick(15)
+        self.players = players
         resolution = (window.get_width(),window.get_height())
         spriteSelected = False
         move = False
-        clock = pygame.time.Clock()
 
-        #Activating first player
-        self._players[0].toggleActive()
+        background = pygame.Surface(resolution)
+        window.blit(background,(0,0))
 
-        while(True):
-            rangeType = "move"
-            clock.tick(30)
-            background = pygame.Surface(resolution)
-            window.blit(background,(0,0))
+        #Constructing the background with scaling option
+        self.drawMap(window, rangeType)
 
-            #CHecks if mouse on screen side and if we must move the map
-            mousePosition = pygame.mouse.get_pos()
-            if mousePosition[1] <= 5:
-                self.moveMap("up")
-            if mousePosition[1] >= resolution[1]-5:
-                self.moveMap("down")
-            if mousePosition[0] <= 5:
-                self.moveMap("left")
-            if mousePosition[0] >= resolution[0]-5:
-                self.moveMap("right")
+        #units display
+        for player in self.players:
+            for unit in player.units:
+                #Moving selected unit to destination
+                if unit.position != unit.destination :
+                    unit.move(self.scale)
+                else:
+                    unit.idle()
 
-            #Events
-            for event in pygame.event.get():
-                #Keyboard events
-                if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        return "mainMenu"
-                    elif event.key == K_KP_PLUS:
-                        for player in self.players:
-                            if player.active:
-                                self._unitManager.addUnit(player,"Frigate",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
-                    elif event.key == K_KP_MINUS:
-                        index = 0
-                        for player in self.players:
-                            for unit in player.units:
-                                if unit.selected:
-                                    self._unitManager.removeUnit(player,index)
-                                index += 1
-                    elif event.key == K_r:
-                        rangeType = "attack"
+                #Scales assets only if not displayed with their original resolution
+                if self.scale != self._TILE_SIZE:
+                    sprite = pygame.transform.scale(unit.sprite,self.scale)
+                else:
+                    sprite = unit.sprite
 
-                    elif event.key == K_UP:
-                        self.moveMap("up")
-                    elif event.key == K_DOWN:
-                        self.moveMap("down")
-                    elif event.key == K_LEFT:
-                        self.moveMap("left")
-                    elif event.key == K_RIGHT:
-                        self.moveMap("right")
+                window.blit(sprite,unit.position)
 
-                #Mouse events
-                if event.type == MOUSEBUTTONDOWN:
-                    #Wheel up
-                    if event.button == 4:
-                        self.zoom("in")
-                    #Wheel down
-                    if event.button == 5:
-                        self.zoom("out")
+        #Showing interface
+        self._interface.show(window)
 
-                    for player in self.players:
-                        for unit in player.units:
-                            rect = unit.getUnitRect(self.scale)
-                            #Selecting a unit
-                            if pygame.mouse.get_pressed()[0] and rect.collidepoint(pygame.mouse.get_pos()):
-                                unit.selected = True
-                            #Deselecting a unit
-                            elif pygame.mouse.get_pressed()[0] and not (rect.collidepoint(pygame.mouse.get_pos())):
-                                unit.selected = False
-                            #Right clic on destination for selected unit
-                            if pygame.mouse.get_pressed()[2] and unit.selected:
-                                destination = self.normalizeCoordinatesToGrid(pygame.mouse.get_pos())
-                                target = self.isDestinationEmpty(destination)
-                                if target[0]:
-                                    unit.destination = destination
-                                else:
-                                    self._unitManager.attack(window,self._mapping,unit,target[1],self.scale)
-
-                #Misc events
-                if event.type == QUIT:
-                    exit()
-
-            #Constructing the background with scaling option
-            self.drawMap(window, rangeType)
-
-            #units display
-            for player in self.players:
-                for unit in player.units:
-                    #Moving selected unit to destination
-                    if unit.position != unit.destination :
-                        unit.move(self.scale)
-                    else:
-                        unit.idle()
-
-                    #Scales assets only if not displayed with their original resolution
-                    if self.scale != self._TILE_SIZE:
-                        sprite = pygame.transform.scale(unit.sprite,self.scale)
-                    else:
-                        sprite = unit.sprite
-
-                    window.blit(sprite,unit.position)
-
-            #Showing interface
-            self._interface.show(window)
-
-            #screen update
-            pygame.display.flip()
+        #screen update
+        pygame.display.flip()

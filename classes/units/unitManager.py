@@ -74,11 +74,17 @@ class UnitManager:
             target.damages += unit.attackForce
             #Check if target is destroyed, if yes remove the target from map
             index = 0
-            for attackedUnit in self.units:
-                if attackedUnit.damages >= attackedUnit.health:
-                    self.removeUnit(index)
-                index += 1
+            
+            if target.damages >= target.health:
+                self.removeUnit(index)
+            index += 1
 
     def removeUnit(self, player:Player ,index:int):
-        del self.units[index]
+        del player.units[index]
         self.count -= 1
+
+    def removeAllUnits(self, player:Player):
+        for unit in player.units:
+            del unit
+            self._count -= 1
+        player.units = []
