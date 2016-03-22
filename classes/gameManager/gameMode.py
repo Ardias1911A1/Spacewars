@@ -26,8 +26,8 @@ class GameMode:
         running = True
         resolution = (window.get_width(),window.get_height())
         for player in self._players:
-            self._unitManager.addUnit(player,"Cruser",self._gameMap._TILE_SIZE,(0,self._gameMap.scale[1]*self._unitManager.count))
-            self._unitManager.addUnit(player,"Cruser",self._gameMap._TILE_SIZE,(0,self._gameMap.scale[1]*self._unitManager.count))
+            self._unitManager.addUnit(player,"Cruser",self._gameMap._TILE_SIZE,(self._gameMap._mapAnchorage[0],self._gameMap._mapAnchorage[1]+self._gameMap.scale[1]*self._unitManager.count))
+            self._unitManager.addUnit(player,"Cruser",self._gameMap._TILE_SIZE,(self._gameMap._mapAnchorage[0],self._gameMap._mapAnchorage[1]+self._gameMap.scale[1]*self._unitManager.count))
 
         #Activating first player
         self._players[0].toggleActive()
@@ -55,7 +55,7 @@ class GameMode:
                     elif event.key == K_p:
                         for player in self._players:
                             if player.active:
-                                self._unitManager.addUnit(player,"Frigate",self._TILE_SIZE,(0,self.scale[1]*self._unitManager.count))
+                                self._unitManager.addUnit(player,"Frigate",self._TILE_SIZE,(self._gameMap._mapAnchorage[0],self._gameMap._mapAnchorage[1]+self._gameMap.scale[1]*self._unitManager.count))
                     elif event.key == K_m:
                         for player in self._players:
                             index = 0
@@ -100,7 +100,7 @@ class GameMode:
                                 if target[0]:
                                     unit.destination = destination
                                 else:
-                                    self._unitManager.attack(window,self._gameMap._mapping,unit,target[1],self._gameMap.scale)
+                                    self._unitManager.attack(window,self._gameMap._mapping,unit,target[1],self._gameMap.scale,self._players)
 
                 #Misc events
                 if event.type == QUIT:

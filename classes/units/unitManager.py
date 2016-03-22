@@ -66,18 +66,19 @@ class UnitManager:
         player.units.append(unit)
         self.count += 1
 
-    def attack(self, window:pygame.display, mapping:list, unit:Unit, target:Unit, scale:tuple):
+    def attack(self, window:pygame.display, mapping:list, unit:Unit, target:Unit, scale:tuple, players:list):
         if unit.inRange(target.position,scale,"attack") and unit.faction != target.faction :
             attackBackground = mapping[int(unit.position[1]/scale[1])][int(unit.position[0]/scale[0])]
             defenseBackground = mapping[int(target.position[1]/scale[1])][int(target.position[0]/scale[0])]
             self._battle.show(window,attackBackground,defenseBackground, unit, target, scale)
             target.damages += unit.attackForce
             #Check if target is destroyed, if yes remove the target from map
-            index = 0
-            
-            if target.damages >= target.health:
-                self.removeUnit(index)
-            index += 1
+            for player in players:
+                index = 0
+                for unit in player.units:
+                    if unit.damages >= unit.health:
+                        self.removeUnit(player,index)
+                    index += 1
 
     def removeUnit(self, player:Player ,index:int):
         del player.units[index]
