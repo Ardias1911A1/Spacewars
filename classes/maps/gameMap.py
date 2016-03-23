@@ -298,6 +298,3 @@ class GameMap:
 
         #Showing interface
         self._interface.show(window)
-
-        #screen update
-        pygame.display.flip()

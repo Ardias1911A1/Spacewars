@@ -12,6 +12,7 @@ from classes.interfaces.interface import Interface
 from classes.maps.gameMap import GameMap
 from classes.units.unitManager import UnitManager
 from classes.gameManager.player import Player
+from classes.screens.transition import Transition
 
 class GameMode:
     def __init__(self, interface:Interface, players:Player=None, gameMap:GameMap=None, unitManager:UnitManager=None):
@@ -19,11 +20,13 @@ class GameMode:
         self._players = players
         self._gameMap = gameMap
         self._unitManager = unitManager
+        self._playerTransition = Transition("ressources/interface/playerTransition.png","NextPlayer")
         self._turn = 0
 
     #Methods
     def run(self, window:pygame.display):
         running = True
+        displayTransition = False
         resolution = (window.get_width(),window.get_height())
         for player in self._players:
             self._unitManager.addUnit(player,"Cruser",self._gameMap._TILE_SIZE,(self._gameMap._mapAnchorage[0],self._gameMap._mapAnchorage[1]+self._gameMap.scale[1]*self._unitManager.count))
@@ -76,6 +79,7 @@ class GameMode:
                         self._gameMap.moveMap("right")
 
                     elif event.key == K_RETURN:
+                        displayTransition = True
                         self._players[0].toggleActive()
                         self._players[1].toggleActive()
 
@@ -111,6 +115,13 @@ class GameMode:
                     exit()
 
             self._gameMap.show(window, rangeType, self._players)
+
+            #Displays transition
+            if displayTransition :
+                displayTransition = self._playerTransition.displayTransition(window)
+
+            #update Display
+            pygame.display.flip()
 
         for player in self._players:
             self._unitManager.removeAllUnits(player)
