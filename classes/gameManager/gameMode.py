@@ -75,6 +75,10 @@ class GameMode:
                     elif event.key == K_RIGHT:
                         self._gameMap.moveMap("right")
 
+                    elif event.key == K_RETURN:
+                        self._players[0].toggleActive()
+                        self._players[1].toggleActive()
+
                 #Mouse events
                 if event.type == MOUSEBUTTONDOWN:
                     #Wheel up
@@ -88,7 +92,7 @@ class GameMode:
                         for unit in player.units:
                             rect = unit.getUnitRect(self._gameMap.scale)
                             #Selecting a unit
-                            if pygame.mouse.get_pressed()[0] and rect.collidepoint(pygame.mouse.get_pos()):
+                            if pygame.mouse.get_pressed()[0] and rect.collidepoint(pygame.mouse.get_pos()) and player.active:
                                 unit.selected = True
                             #Deselecting a unit
                             elif pygame.mouse.get_pressed()[0] and not (rect.collidepoint(pygame.mouse.get_pos())):
