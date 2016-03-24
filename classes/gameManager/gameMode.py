@@ -27,6 +27,9 @@ class GameMode:
     def nextPlayer(self):
         count = 0
         for player in self._players:
+            for unit in player.units:
+                unit.selected = False
+
             if player.active:
                 player.toggleActive()
                 index = count + 1
@@ -94,6 +97,7 @@ class GameMode:
                     elif event.key == K_RETURN:
                         displayTransition = True
                         playerName = self.nextPlayer()
+
                 #Mouse events
                 if event.type == MOUSEBUTTONDOWN:
                     #Wheel up
