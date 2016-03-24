@@ -20,10 +20,22 @@ class GameMode:
         self._players = players
         self._gameMap = gameMap
         self._unitManager = unitManager
-        self._playerTransition = Transition("ressources/interface/playerTransition.png","NextPlayer")
+        self._playerTransition = Transition("ressources/interface/playerTransition.png")
         self._turn = 0
 
     #Methods
+    def nextPlayer(self):
+        count = 0
+        for player in self._players:
+            if player.active:
+                player.toggleActive()
+                index = count + 1
+                if index >= len(self._players):
+                    index = 0
+            count += 1
+        self._players[index].toggleActive()
+        return self._players[index].name
+
     def run(self, window:pygame.display):
         running = True
         displayTransition = False
@@ -34,6 +46,7 @@ class GameMode:
 
         #Activating first player
         self._players[0].toggleActive()
+        playerName = self._players[0].name
 
         while(running):
             rangeType = "move"
@@ -80,9 +93,7 @@ class GameMode:
 
                     elif event.key == K_RETURN:
                         displayTransition = True
-                        self._players[0].toggleActive()
-                        self._players[1].toggleActive()
-
+                        playerName = self.nextPlayer()
                 #Mouse events
                 if event.type == MOUSEBUTTONDOWN:
                     #Wheel up
@@ -118,7 +129,7 @@ class GameMode:
 
             #Displays transition
             if displayTransition :
-                displayTransition = self._playerTransition.displayTransition(window)
+                displayTransition = self._playerTransition.displayTransition(window, playerName+"'s turn")
 
             #update Display
             pygame.display.flip()
