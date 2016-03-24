@@ -130,6 +130,13 @@ class GameMode:
             #Displays transition
             if displayTransition :
                 displayTransition = self._playerTransition.displayTransition(window, playerName+"'s turn")
+            else:
+                #Showing interface
+                self._interface.show(window)
+                for player in self._players:
+                    if player.active:
+                        self._interface.displayUnitInfos(window, player.units)
+
 
             #update Display
             pygame.display.flip()

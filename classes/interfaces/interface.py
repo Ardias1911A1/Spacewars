@@ -8,14 +8,13 @@ import pygame
 from pygame.locals import *
 
 from classes.definitions.constants import *
-#from classes.maps.gameMap import GameMap
+from classes.maps.gameMap import GameMap
 
 class Interface:
-    def __init__(self, units:list=None, miniMap=None):
+    def __init__(self, miniMap:GameMap=None):
         self._topInterface = pygame.image.load("ressources/interface/topInterface.png").convert_alpha()
         self._bottomInterface = pygame.image.load("ressources/interface/bottomInterface.png").convert_alpha()
         self._miniMap = miniMap
-        self._units = units
         self._font = DEFAULT_FONT
         self._fontSize = 12
 
@@ -56,10 +55,11 @@ class Interface:
     bottomInterface =   property(_get_bottomInterface,_set_bottomInterface,_del_bottomInterface,_help_bottomInterface)
     miniMap =           property(_get_miniMap,_set_miniMap,_del_miniMap,_help_miniMap)
 
-    def displayUnitInfos(self,window:pygame.display):
+    def displayUnitInfos(self,window:pygame.display, units:list):
         windowResolution = (window.get_width(),window.get_height())
         position = (10,int(windowResolution[1]*5/6))
-        for unit in self._units:
+
+        for unit in units:
             if unit.selected:
                 currentHealth = unit.health - unit.damages
                 maxHealth = unit.health
@@ -97,9 +97,5 @@ class Interface:
         window.blit(bottomInterface,(0,windowResolution[1]-windowHeightOn5))
 
         #show minimap
-        miniMapPosition = (int(windowResolution[0]*7/8),int(windowResolution[1]*5/6))
-        self.miniMap.drawMap(window,"move",miniMapPosition,True)
-
-
-        #Unit informations
-        self.displayUnitInfos(window)
+        miniMapPosition = (int(windowResolution[0]*6/7),int(windowResolution[1]*5/6))
+        self.miniMap.drawMap(window,"move",miniMapPosition,True, self._bottomInterface.get_height()-10,self.bottomInterface.get_width()//15-10)

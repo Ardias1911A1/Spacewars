@@ -13,7 +13,6 @@ from classes.units.unit import Unit
 from classes.maps.grid import Grid
 from classes.maps.tile import Tile
 from classes.gameManager.player import Player
-from classes.interfaces.interface import Interface
 import time
 
 class GameMap:
@@ -33,7 +32,6 @@ class GameMap:
         self._grid = Grid()
 
         self._unitManager = UnitManager()
-        self._interface = Interface(self._unitManager.units,self)
         self._mapAnchorage = (0,0)
         self.players = None
         self._clock = pygame.time.Clock()
@@ -136,15 +134,13 @@ class GameMap:
     #Methods
     #This method draws the background of the map by displaying each element of self._map at the
     #correct coordinates and with the chosen scaling
-    def drawMap(self, window:pygame.display, rangeType:str="move", position:tuple=None, isMiniMap:bool=False):
+    def drawMap(self, window:pygame.display, rangeType:str="move", position:tuple=None, isMiniMap:bool=False, maxHorSize:int=200, maxVertSize:int=200):
         hCount = 0
         tacticalGrid = False
 
         if isMiniMap:
-            #Making sure the minimap will not go out of screen
-            maxVertSize = self._interface.bottomInterface.get_height()-10
-            maxHorSize = (self._interface.bottomInterface.get_width()/12-10)
 
+            #Making sure the minimap will not go out of screen
             mapVertTileCount = len(self.mapping)
             mapHorTileCount = len(self.mapping[0])
             miniMapTileSize = (int(maxHorSize/mapHorTileCount),int(maxVertSize/mapVertTileCount))
@@ -155,9 +151,8 @@ class GameMap:
             else:
                 miniMapTileSize = (miniMapTileSize[0],miniMapTileSize[0])
 
-                miniMapTileSizeOn2 = (int(miniMapTileSize[0]/2),int(miniMapTileSize[1]/2))
-
-                sizeFactor = ((mapHorTileCount*miniMapTileSize[0])/(mapHorTileCount*self.scale[0]) , (mapVertTileCount*miniMapTileSize[1])/(mapVertTileCount*self.scale[1]))
+            miniMapTileSizeOn2 = (int(miniMapTileSize[0]/2),int(miniMapTileSize[1]/2))
+            sizeFactor = ((mapHorTileCount*miniMapTileSize[0])/(mapHorTileCount*self.scale[0]) , (mapVertTileCount*miniMapTileSize[1])/(mapVertTileCount*self.scale[1]))
             scale = miniMapTileSize
         else:
             position = self._mapAnchorage
@@ -295,6 +290,3 @@ class GameMap:
                     sprite = unit.sprite
 
                 window.blit(sprite,unit.position)
-
-        #Showing interface
-        self._interface.show(window)

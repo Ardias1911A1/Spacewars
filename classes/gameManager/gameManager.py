@@ -32,8 +32,10 @@ class GameManager:
         self._players.append(Player("Khan","Federation",None,3))
         self._players.append(Player("Delgar","Federation",None,3))
 
+        gameMap = GameMap("P4X-86767",mapCode)
+
         self._gameModes = dict( mainMenu =  ["mainMenu","Main menu",None],
-                                campaign =  ["campaign","Start a new campaign",GameMode(Interface(),self._players,GameMap("P4X-86767",mapCode),UnitManager())],
+                                campaign =  ["campaign","Start a new campaign",GameMode(Interface(gameMap),self._players,gameMap,UnitManager())],
                                 options =   ["options","Options",None],
                                 exit =      ["exit","Leave the game",None])
     #accessors
