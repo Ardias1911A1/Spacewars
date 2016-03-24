@@ -29,6 +29,8 @@ class GameManager:
         self._players = []
         self._players.append(Player("Ardias","Empire",None,1))
         self._players.append(Player("Gorgoroth","Coalition",None,2))
+        self._players.append(Player("Khan","Federation",None,3))
+        self._players.append(Player("Delgar","Federation",None,3))
 
         self._gameModes = dict( mainMenu =  ["mainMenu","Main menu",None],
                                 campaign =  ["campaign","Start a new campaign",GameMode(Interface(),self._players,GameMap("P4X-86767",mapCode),UnitManager())],
