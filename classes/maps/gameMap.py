@@ -261,6 +261,9 @@ class GameMap:
                     unit.position = position
                     unit.destination = unit.position
 
+    def actions(self, event):
+        print("Map : "+str(event))
+
     def show(self,  window: pygame.display, rangeType:str="move", players=None):
         self._clock.tick(15)
         self.players = players

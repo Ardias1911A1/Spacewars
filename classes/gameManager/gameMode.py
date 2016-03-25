@@ -99,31 +99,37 @@ class GameMode:
                         playerName = self.nextPlayer()
 
                 #Mouse events
-                if event.type == MOUSEBUTTONDOWN:
-                    #Wheel up
-                    if event.button == 4:
-                        self._gameMap.zoom("in")
-                    #Wheel down
-                    if event.button == 5:
-                        self._gameMap.zoom("out")
+                onInterface = self._interface.isOnInterface(pygame.mouse.get_pos())
+                if onInterface:
+                    if event.type == MOUSEBUTTONDOWN:
+                        print("On Interface")
+                else:
+                    if event.type == MOUSEBUTTONDOWN:
+                        print("On map")
+                        #Wheel up
+                        if event.button == 4:
+                            self._gameMap.zoom("in")
+                        #Wheel down
+                        if event.button == 5:
+                            self._gameMap.zoom("out")
 
-                    for player in self._players:
-                        for unit in player.units:
-                            rect = unit.getUnitRect(self._gameMap.scale)
-                            #Selecting a unit
-                            if pygame.mouse.get_pressed()[0] and rect.collidepoint(pygame.mouse.get_pos()) and player.active:
-                                unit.selected = True
-                            #Deselecting a unit
-                            elif pygame.mouse.get_pressed()[0] and not (rect.collidepoint(pygame.mouse.get_pos())):
-                                unit.selected = False
-                            #Right clic on destination for selected unit
-                            if pygame.mouse.get_pressed()[2] and unit.selected:
-                                destination = self._gameMap.normalizeCoordinatesToGrid(pygame.mouse.get_pos())
-                                target = self._gameMap.isDestinationEmpty(destination)
-                                if target[0]:
-                                    unit.destination = destination
-                                else:
-                                    self._unitManager.attack(window,self._gameMap._mapping,unit,target[1],self._gameMap.scale,self._players)
+                        for player in self._players:
+                            for unit in player.units:
+                                rect = unit.getUnitRect(self._gameMap.scale)
+                                #Selecting a unit
+                                if pygame.mouse.get_pressed()[0] and rect.collidepoint(pygame.mouse.get_pos()) and player.active:
+                                    unit.selected = True
+                                #Deselecting a unit
+                                elif pygame.mouse.get_pressed()[0] and not (rect.collidepoint(pygame.mouse.get_pos())):
+                                    unit.selected = False
+                                #Right clic on destination for selected unit
+                                if pygame.mouse.get_pressed()[2] and unit.selected:
+                                    destination = self._gameMap.normalizeCoordinatesToGrid(pygame.mouse.get_pos())
+                                    target = self._gameMap.isDestinationEmpty(destination)
+                                    if target[0]:
+                                        unit.destination = destination
+                                    else:
+                                        self._unitManager.attack(window,self._gameMap._mapping,unit,target[1],self._gameMap.scale,self._players)
 
                 #Misc events
                 if event.type == QUIT:

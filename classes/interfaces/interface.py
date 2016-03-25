@@ -12,8 +12,12 @@ from classes.maps.gameMap import GameMap
 
 class Interface:
     def __init__(self, miniMap:GameMap=None, menus:list=None):
-        self._topInterface = pygame.image.load("ressources/interface/topInterface.png").convert_alpha()
-        self._bottomInterface = pygame.image.load("ressources/interface/bottomInterface.png").convert_alpha()
+        self._topInterface = "ressources/interface/topInterface.png"
+        self._topInterfaceImage = pygame.image.load(self._topInterface).convert_alpha()
+        self._topInterfacePosition = (0,0)
+        self._bottomInterface = "ressources/interface/bottomInterface.png"
+        self._bottomInterfaceImage = pygame.image.load(self._bottomInterface).convert_alpha()
+        self._bottomInterfacePosition = (0,0)
         self._miniMap = miniMap
         self._font = DEFAULT_FONT
         self._fontSize = 12
@@ -31,9 +35,11 @@ class Interface:
 
     #mutators
     def _set_topInterface(self, path:str):
-        self._topInterface = pygame.image.load(path).convert_alpha()
+        self._topInterface = path
+        self._topInterfaceImage = pygame.image.load(path).convert_alpha()
     def _set_bottomInterface(self, path:str):
-        self._bottomInterface = pygame.image.load(path).convert_alpha()
+        self._bottomInterface = path
+        self._bottomInterfaceImage = pygame.image.load(path).convert_alpha()
     def _set_miniMap(self, miniMap:GameMap):
         self._miniMap = miniMap
     def _set_menus(self, menus:list):
@@ -51,9 +57,9 @@ class Interface:
 
     #help
     def _help_topInterface(self):
-        return "Contains the image for the top interface"
+        return "Contains the image path for the top interface as string"
     def _help_bottomInterface(self):
-        return "Contains the image for the bottom interface"
+        return "Contains the image path for the bottom interface as string"
     def _help_miniMap(self):
         return "Contains mini Map as map object"
     def _help_menus(self):
@@ -82,6 +88,22 @@ class Interface:
                     window.blit(entry,coordinates)
                     count += 1
 
+    def isOnInterface(self, position:tuple):
+        interfacePositions = []
+        interfacePositions.append(self._topInterfaceImage.get_rect(topleft=self._topInterfacePosition,width=self._topInterfaceImage.get_width(), height=self._topInterfaceImage.get_height()))
+        interfacePositions.append(self._bottomInterfaceImage.get_rect(topleft=self._bottomInterfacePosition,width=self._bottomInterfaceImage.get_width(), height=self._bottomInterfaceImage.get_height()))
+
+        for rect in interfacePositions:
+            if rect.collidepoint(position):
+                collision = True
+            else:
+                collision = False
+        return collision
+
+    #Recieve events from the player via gamemode and execute interface's actions (example: menu clic)
+    def actions(self,event):
+        print("Interface : "+str(event))
+
     def show(self, window:pygame.display):
         #Backgrounds of the interface
         windowResolution = (window.get_width(),window.get_height())
@@ -93,19 +115,17 @@ class Interface:
         bottomResolution = (windowResolution[0],windowHeightOn5)
 
         #scaling images if they are different from the current resolution
-        if (self.topInterface.get_width(), self.topInterface.get_height()) != topResolution :
-            topInterface = pygame.transform.scale(self.topInterface,topResolution)
-        else:
-            topInterface = self.topInterface
+        if (self._topInterfaceImage.get_width(), self._topInterfaceImage.get_height()) != topResolution :
+            self._topInterfaceImage = pygame.transform.scale(self._topInterfaceImage,topResolution)
 
-        if (self.bottomInterface.get_width(),self.bottomInterface.get_height()) != bottomResolution:
-            bottomInterface = pygame.transform.scale(self.bottomInterface,bottomResolution)
-        else:
-            bottomInterface = self.bottomInterface
+        if (self._bottomInterfaceImage.get_width(),self._bottomInterfaceImage.get_height()) != bottomResolution:
+            self._bottomInterfaceImage = pygame.transform.scale(self._bottomInterfaceImage,bottomResolution)
+
+        self._bottomInterfacePosition = (0,windowResolution[1]-self._bottomInterfaceImage.get_height())
 
         #Shows Backgrounds
-        window.blit(topInterface,ANCHOR_AT_00)
-        window.blit(bottomInterface,(0,windowResolution[1]-windowHeightOn5))
+        window.blit(self._topInterfaceImage,self._topInterfacePosition)
+        window.blit(self._bottomInterfaceImage,self._bottomInterfacePosition)
 
         #Shows menus
         menuCount = 0
@@ -117,8 +137,4 @@ class Interface:
 
         #show minimap
         miniMapPosition = (int(windowResolution[0]*6/7),int(windowResolution[1]*5/6))
-        self.miniMap.drawMap(window,"move",miniMapPosition,True, self._bottomInterface.get_height()-10,self.bottomInterface.get_width()//15-10)
-
-    #Recieve events from the player via gamemode and execute interface's actions (example: menu clic)
-    def actions(self,event:list):
-        print("action")
+        self.miniMap.drawMap(window,"move",miniMapPosition,True, self._bottomInterfaceImage.get_height()-10,self._bottomInterfaceImage.get_width()//15-10)
