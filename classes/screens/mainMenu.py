@@ -14,7 +14,7 @@ import time
 
 class MainMenu:
     #constructor
-    def __init__(self, window: pygame.display, gameModes:dict, font:str=DEFAULT_FONT, fontColor:tuple=(200,0,0)):
+    def __init__(self, gameModes:dict, font:str=DEFAULT_FONT, fontColor:tuple=(200,0,0)):
         self._background = pygame.image.load("ressources/main_title_background.png").convert()
         self._starship = Spriteset("Cruser","ressources/sprites/starships/cruser.png",(200,200))
         self._planet = Tileset("Planet","ressources/tilesets/space/planet1.png",(800,800))
@@ -22,10 +22,11 @@ class MainMenu:
         self._title = GAME_TITLE
         self._titleFontSize = 64
         self._titleFontColor = fontColor
+
         self._entries = []
         for key, gameMode in gameModes.items():
-            if gameMode[0] != gameModes["mainMenu"][0]:
-                self._entries.append([False,gameMode[1],gameMode[0]])
+            self._entries.append([False,gameMode[1],gameMode[0]])
+
         self._fontSize = 24
         self._fontColor = fontColor
     #Methods

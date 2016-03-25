@@ -17,54 +17,73 @@ from classes.gameManager.gameMode import GameMode
 class GameManager:
     def __init__(self):
 
-        mapCode =   [["Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
-                    ["Empty_space","Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
-                    ["Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
-                    ["Empty_space","Empty_space","Empty_space","Empty_space","Stations","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
-                    ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
-                    ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
-                    ["Empty_space","Stations","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
-                    ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"]]
-
+        #Setting players
         self._players = []
         self._players.append(Player("Ardias","Empire",None,1))
         self._players.append(Player("Gorgoroth","Coalition",None,2))
         self._players.append(Player("Khan","Federation",None,3))
         self._players.append(Player("Delgar","Federation",None,3))
 
-        gameMap = GameMap("P4X-86767",mapCode)
 
-        self._gameModes = dict( mainMenu =  ["mainMenu","Main menu",None],
-                                campaign =  ["campaign","Start a new campaign",GameMode(Interface(gameMap),self._players,gameMap,UnitManager())],
+        #Constructing campagin game mode
+        mapCode =   [["Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
+        ["Empty_space","Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
+        ["Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
+        ["Empty_space","Empty_space","Empty_space","Empty_space","Stations","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
+        ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
+        ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Asteroids","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
+        ["Empty_space","Stations","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"],
+        ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"]]
+
+        gameMap = GameMap("P4X-86767",mapCode)
+        campaignInterface = Interface(gameMap)
+        campaignGameMode = GameMode(campaignInterface,self._players,gameMap,UnitManager())
+        campaignMode = ["campaign","Start a new campaign",campaignGameMode]
+
+        #Setting game modes
+        self._gameModes = dict( campaign =  campaignMode,
                                 options =   ["options","Options",None],
                                 exit =      ["exit","Leave the game",None])
+
+        #Constructing main menu game mode
+        self._mainMenu = ["mainMenu","Main menu",MainMenu(self.gameModes)]
+
     #accessors
     def _get_gameModes(self):
         return self._gameModes
     def _get_players(self):
         return self._players
+    def _get_mainMenu(self):
+        return self._mainMenu
 
     #mutators
     def _set_gameModes(self, gameModes:dict):
         self._gameModes = gameModes
     def _set_players(self, players:list):
         self._players = players
+    def _set_mainMenu(self, mainMenu:list):
+        self._mainMenu = mainMenu
 
     #destructors
     def _del_gameModes(self):
         del self._gameModes
     def _del_players(self):
         del self._players
+    def _del_mainMenu(self):
+        del self._mainMenu
 
     #help
     def _help_gameModes(self):
-        return "Mode of the game stored as a dictionary of of list : dict(<key>=['mode id','mode caption'])"
+        return "Mode of the game stored as a dictionary of of list : dict(<key>=['mode id','mode caption',game mode object])"
     def _help_players(self):
         return "Players of the game stored as a list of player objects"
+    def _help_mainMenu(self):
+        return "Main menu of the game as a list : ['mode id','mode caption',main menu object]"
 
     #properties
     gameModes = property(_get_gameModes,_set_gameModes,_del_gameModes,_help_gameModes)
     players =   property(_get_players,_set_players,_del_players,_help_players)
+    mainMenu =  property(_get_mainMenu,_set_mainMenu,_del_mainMenu,_help_mainMenu)
 
     #Methods
     def addPlayer(self, name:str="Player",faction:str="Empire",commander:str=None,team:int=1):
@@ -72,19 +91,17 @@ class GameManager:
 
     def load(self, window:pygame.display):
         running = True
-        gameMode = self.gameModes["mainMenu"][0]
+        gameMode = self.mainMenu[0]
 
         while(running):
-            if gameMode == self.gameModes["mainMenu"][0]:
-                mainMenu = MainMenu(window,self.gameModes)
-                gameMode = mainMenu.show(window)
-                del mainMenu
-            elif gameMode == self.gameModes["campaign"][0]:
+            if gameMode == self.gameModes["campaign"][0]:
                 gameMode = self.gameModes["campaign"][2].run(window)
             elif gameMode == self.gameModes["options"][0]:
-                gameMode = self.gameModes["mainMenu"][0]
+                gameMode = None
             elif gameMode == self.gameModes["exit"][0]:
                 running = False
+            else:
+                gameMode = self.mainMenu[2].show(window)
 
             for event in pygame.event.get():
                 if event.type == QUIT:

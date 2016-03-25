@@ -1,6 +1,6 @@
 #--------------------------------------------
 #Author: Chappuis Anthony
-#Date: Mars 2016
+#Date: March 2016
 #
 #This class is used to manage a Tile (a tile is a case in the games)
 #--------------------------------------------
