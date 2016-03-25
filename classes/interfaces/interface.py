@@ -103,9 +103,22 @@ class Interface:
         else:
             bottomInterface = self.bottomInterface
 
+        #Shows Backgrounds
         window.blit(topInterface,ANCHOR_AT_00)
         window.blit(bottomInterface,(0,windowResolution[1]-windowHeightOn5))
+
+        #Shows menus
+        menuCount = 0
+        for menu in self.menus:
+            menuPosition = (menuCount*64,0)
+            icon = pygame.image.load(menu.icon).convert_alpha()
+            window.blit(icon, menuPosition)
+            menuCount += 1
 
         #show minimap
         miniMapPosition = (int(windowResolution[0]*6/7),int(windowResolution[1]*5/6))
         self.miniMap.drawMap(window,"move",miniMapPosition,True, self._bottomInterface.get_height()-10,self.bottomInterface.get_width()//15-10)
+
+    #Recieve events from the player via gamemode and execute interface's actions (example: menu clic)
+    def actions(self,event:list):
+        print("action")

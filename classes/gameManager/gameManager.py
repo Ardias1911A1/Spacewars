@@ -10,6 +10,7 @@ from pygame.locals import *
 from classes.gameManager.player import Player
 from classes.maps.gameMap import GameMap
 from classes.units.unitManager import UnitManager
+from classes.interfaces.menu import Menu
 from classes.screens.mainMenu import MainMenu
 from classes.interfaces.interface import Interface
 from classes.gameManager.gameMode import GameMode
@@ -36,7 +37,13 @@ class GameManager:
         ["Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space","Empty_space"]]
 
         gameMap = GameMap("P4X-86767",mapCode)
-        campaignInterface = Interface(gameMap)
+
+        menu1 = Menu("File","ressources/interface/menuIcon.png",[['test','Test'],['test2','Test2']])
+        menu2 = Menu("File","ressources/interface/menuIcon.png",[['test','Test'],['test2','Test2']])
+        menu3 = Menu("File","ressources/interface/menuIcon.png",[['test','Test'],['test2','Test2']])
+        menus = [menu1,menu2,menu3]
+
+        campaignInterface = Interface(gameMap,menus)
         campaignGameMode = GameMode(campaignInterface,self._players,gameMap,UnitManager())
         campaignMode = ["campaign","Start a new campaign",campaignGameMode]
 
