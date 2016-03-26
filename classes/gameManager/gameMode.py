@@ -102,10 +102,9 @@ class GameMode:
                 onInterface = self._interface.isOnInterface(pygame.mouse.get_pos())
                 if onInterface:
                     if event.type == MOUSEBUTTONDOWN:
-                        print("On Interface")
+                        self._interface.actions(event)
                 else:
                     if event.type == MOUSEBUTTONDOWN:
-                        print("On map")
                         #Wheel up
                         if event.button == 4:
                             self._gameMap.zoom("in")

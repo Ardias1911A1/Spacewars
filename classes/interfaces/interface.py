@@ -93,11 +93,11 @@ class Interface:
         interfacePositions.append(self._topInterfaceImage.get_rect(topleft=self._topInterfacePosition,width=self._topInterfaceImage.get_width(), height=self._topInterfaceImage.get_height()))
         interfacePositions.append(self._bottomInterfaceImage.get_rect(topleft=self._bottomInterfacePosition,width=self._bottomInterfaceImage.get_width(), height=self._bottomInterfaceImage.get_height()))
 
+        collision = False
         for rect in interfacePositions:
             if rect.collidepoint(position):
                 collision = True
-            else:
-                collision = False
+
         return collision
 
     #Recieve events from the player via gamemode and execute interface's actions (example: menu clic)
