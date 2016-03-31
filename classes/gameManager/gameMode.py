@@ -105,6 +105,7 @@ class GameMode:
                         self._interface.actions(event)
                 else:
                     if event.type == MOUSEBUTTONDOWN:
+                        self._interface.actions(event)
                         #Wheel up
                         if event.button == 4:
                             self._gameMap.zoom("in")

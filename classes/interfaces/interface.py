@@ -107,7 +107,7 @@ class Interface:
 
     #Recieve events from the player via gamemode and execute interface's actions (example: menu clic)
     def actions(self,event):
-        #If clic is on a menu
+        #Check if clic is on a menu
         for menu in self._menus:
             rect = menu.icon.get_rect(topleft=menu.position,width=menu.icon.get_width(), height=menu.icon.get_height())
             if rect.collidepoint(event.pos):
