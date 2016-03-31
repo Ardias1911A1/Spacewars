@@ -23,6 +23,11 @@ class Interface:
         self._fontSize = 12
         self._menus = menus
 
+        menuCount = 0
+        for menu in self._menus:
+            menu.position = (menuCount*64,0)
+            menuCount += 1
+
     #accessors
     def _get_topInterface(self):
         return self._topInterface
@@ -102,7 +107,14 @@ class Interface:
 
     #Recieve events from the player via gamemode and execute interface's actions (example: menu clic)
     def actions(self,event):
-        print("Interface : "+str(event))
+        #If clic is on a menu
+        for menu in self._menus:
+            rect = menu.icon.get_rect(topleft=menu.position,width=menu.icon.get_width(), height=menu.icon.get_height())
+            if rect.collidepoint(event.pos):
+                menu.active = True
+            else:
+                menu.active = False
+
 
     def show(self, window:pygame.display):
         #Backgrounds of the interface
@@ -128,12 +140,13 @@ class Interface:
         window.blit(self._bottomInterfaceImage,self._bottomInterfacePosition)
 
         #Shows menus
-        menuCount = 0
         for menu in self.menus:
-            menuPosition = (menuCount*64,0)
-            icon = pygame.image.load(menu.icon).convert_alpha()
+            menuPosition = menu.position
+            icon = menu.icon
             window.blit(icon, menuPosition)
-            menuCount += 1
+            #Showing menu entries
+            if menu.active:
+                menu.show(window)
 
         #show minimap
         miniMapPosition = (int(windowResolution[0]*6/7),int(windowResolution[1]*5/6))
