@@ -54,6 +54,9 @@ class GameMode:
         while(running):
             rangeType = "move"
 
+            for menu in self._interface.menus:
+                menu.mouseOverEntry(pygame.mouse.get_pos())
+
             #Checks if mouse on screen side and if we must move the map
             mousePosition = pygame.mouse.get_pos()
             if mousePosition[1] <= 5:

@@ -38,9 +38,9 @@ class GameManager:
 
         gameMap = GameMap("P4X-86767",mapCode)
 
-        menu1 = Menu("File","ressources/interface/menuIcon.png",[['test','Test'],['test2','Test2']])
-        menu2 = Menu("File","ressources/interface/menuIcon.png",[['test','Test'],['test2','Test2']])
-        menu3 = Menu("File","ressources/interface/menuIcon.png",[['test','Test'],['test2','Test2']])
+        menu1 = Menu("File","ressources/interface/menuIcon.png",[['test','Test',False],['test2','Test2',False]])
+        menu2 = Menu("File","ressources/interface/menuIcon.png",[['test','Test',False],['test2','Test2',False]])
+        menu3 = Menu("File","ressources/interface/menuIcon.png",[['test','Test',False],['test2','Test2',False]])
         menus = [menu1,menu2,menu3]
 
         campaignInterface = Interface(gameMap,menus)

@@ -75,9 +75,26 @@ class Menu:
     active =    property(_get_active,_set_active,_del_active,_help_active)
 
     #Methods
+    def mouseOverEntry(self,mousePosition):
+        entryCount = 0
+        for entry in self.entries:
+            entryPosition = (self.position[0],self.position[1]+64+entryCount*self._fontSize)
+            text = pygame.font.Font(self._font,self._fontSize).render(entry[0],16,(0,0,0))
+            rect = text.get_rect(topleft=entryPosition,width=text.get_width(),height=text.get_height())
+
+            if rect.collidepoint(mousePosition):
+                entry[2] = True
+            else:
+                entry[2] = False
+
+            entryCount += 1
+
     def show(self,window:pygame.display):
         entryCount = 0
         for entry in self.entries:
-            text = pygame.font.Font(self._font,self._fontSize).render(entry[0],16,(0,255,0))
+            if entry[2]:
+                text = pygame.font.Font(self._font,self._fontSize).render(entry[0],16,(0,200,0))
+            else:
+                text = pygame.font.Font(self._font,self._fontSize).render(entry[0],16,(200,0,0))
             window.blit(text,(self.position[0],self.icon.get_height()+entryCount*self._fontSize+2))
             entryCount += 1
