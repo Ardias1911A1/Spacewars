@@ -91,9 +91,7 @@ class GameMode:
             for event in pygame.event.get():
                 #Keyboard events
                 if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        running = False
-                    elif event.key == K_p:
+                    if event.key == K_p:
                         for player in self._players:
                             if player.active:
                                 self._unitManager.addUnit(player,"Frigate",self._TILE_SIZE,(self._gameMap._mapAnchorage[0],self._gameMap._mapAnchorage[1]+self._gameMap.scale[1]*self._unitManager.count))
@@ -125,7 +123,6 @@ class GameMode:
                 if onInterface:
                     if event.type == MOUSEBUTTONDOWN:
                         gameMode = self._interface.actions(event)
-                        print("gameMode: "+str(gameMode))
                         if gameMode != None:
                             running = False
                 else:

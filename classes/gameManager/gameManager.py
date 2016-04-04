@@ -47,15 +47,13 @@ class GameManager:
 
         self._gameModes["campaign"] =  campaignMode
 
-        #Constructing main menu game mode
+        #Constructing menus
         self._mainMenu = ["mainMenu","Main menu",MainMenu(self.gameModes)]
 
-        menu1 = Menu("File","ressources/interface/menuIcon.png",[[self._mainMenu[0],self._mainMenu[1],False],[self._gameModes['exit'][0],self._gameModes['exit'][1],False]])
-        menu2 = Menu("File","ressources/interface/menuIcon.png",[['test','Test',False],['test2','Test2',False]])
-        menu3 = Menu("File","ressources/interface/menuIcon.png",[['test','Test',False],['test2','Test2',False]])
-        menus = [menu1,menu2,menu3]
+        campaignMenus = []
+        campaignMenus.append(Menu("File","ressources/interface/menuIcon.png",[[self._mainMenu[0],self._mainMenu[1],False],[self._gameModes['exit'][0],self._gameModes['exit'][1],False]]))
 
-        self.gameModes["campaign"][2].interface.menus = menus
+        self.gameModes["campaign"][2].interface.menus = campaignMenus
 
     #accessors
     def _get_gameModes(self):
