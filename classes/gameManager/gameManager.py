@@ -47,13 +47,26 @@ class GameManager:
 
         self._gameModes["campaign"] =  campaignMode
 
+        #Constructing skirmish game mode
+        mapCode = [["Empty_space","Empty_space"],
+        ["Empty_space","Empty_space"]]
+
+        gameMap = GameMap("Test",mapCode)
+
+        skirmishInterface = Interface(gameMap)
+        skirmishGamemode = GameMode(skirmishInterface,self._players,gameMap,UnitManager())
+        skirmishMode = ["skirmish","Skirmish",skirmishGamemode]
+
+        self._gameModes["skirmish"] = skirmishMode
+
         #Constructing menus
         self._mainMenu = ["mainMenu","Main menu",MainMenu(self.gameModes)]
 
-        campaignMenus = []
-        campaignMenus.append(Menu("File","ressources/interface/menuIcon.png",[[self._mainMenu[0],self._mainMenu[1],False],[self._gameModes['exit'][0],self._gameModes['exit'][1],False]]))
+        menus = []
+        menus.append(Menu("File","ressources/interface/menuIcon.png",[[self._mainMenu[0],self._mainMenu[1],False],[self._gameModes['exit'][0],self._gameModes['exit'][1],False]]))
 
-        self.gameModes["campaign"][2].interface.menus = campaignMenus
+        self.gameModes["campaign"][2].interface.menus = menus
+        self.gameModes["skirmish"][2].interface.menus = menus
 
     #accessors
     def _get_gameModes(self):
@@ -101,14 +114,13 @@ class GameManager:
         gameMode = self.mainMenu[0]
 
         while(running):
-            if gameMode == self.gameModes["campaign"][0]:
-                gameMode = self.gameModes["campaign"][2].run(window)
-            elif gameMode == self.gameModes["options"][0]:
-                gameMode = None
-            elif gameMode == self.gameModes["exit"][0]:
-                running = False
-            else:
-                gameMode = self.mainMenu[2].show(window)
+            for key,mode in self.gameModes.items():
+                if gameMode == self.gameModes["exit"][0]:
+                    running = False
+                elif gameMode == mode[0]:
+                    gameMode = mode[2].run(window)
+                else:
+                    gameMode = self.mainMenu[2].show(window)
 
             for event in pygame.event.get():
                 if event.type == QUIT:

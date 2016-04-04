@@ -173,7 +173,7 @@ class GameMode:
             #update Display
             pygame.display.flip()
 
-        #for player in self._players:
-            #self._unitManager.removeAllUnits(player)
+        for player in self._players:
+            self._unitManager.removeAllUnits(player)
 
         return gameMode

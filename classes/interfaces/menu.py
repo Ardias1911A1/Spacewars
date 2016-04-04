@@ -75,7 +75,7 @@ class Menu:
     active =    property(_get_active,_set_active,_del_active,_help_active)
 
     #Methods
-    def mouseOverEntry(self,mousePosition):
+    def mouseOverEntry(self,mousePosition:tuple):
         collision = False
         entryCount = 0
         for entry in self.entries:
