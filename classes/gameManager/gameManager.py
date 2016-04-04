@@ -25,6 +25,9 @@ class GameManager:
         self._players.append(Player("Khan","Federation",None,3))
         self._players.append(Player("Delgar","Federation",None,3))
 
+        #Setting base modes
+        self._gameModes = dict( options =   ["options","Options",None],
+                                exit =      ["exit","Leave the game",None])
 
         #Constructing campagin game mode
         mapCode =   [["Empty_space","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Asteroids","Empty_space","Empty_space","Empty_space"],
@@ -38,22 +41,21 @@ class GameManager:
 
         gameMap = GameMap("P4X-86767",mapCode)
 
-        menu1 = Menu("File","ressources/interface/menuIcon.png",[['test','Test',False],['test2','Test2',False]])
+        campaignInterface = Interface(gameMap)
+        campaignGameMode = GameMode(campaignInterface,self._players,gameMap,UnitManager())
+        campaignMode = ["campaign","Start a new campaign",campaignGameMode]
+
+        self._gameModes["campaign"] =  campaignMode
+
+        #Constructing main menu game mode
+        self._mainMenu = ["mainMenu","Main menu",MainMenu(self.gameModes)]
+
+        menu1 = Menu("File","ressources/interface/menuIcon.png",[[self._mainMenu[0],self._mainMenu[1],False],[self._gameModes['exit'][0],self._gameModes['exit'][1],False]])
         menu2 = Menu("File","ressources/interface/menuIcon.png",[['test','Test',False],['test2','Test2',False]])
         menu3 = Menu("File","ressources/interface/menuIcon.png",[['test','Test',False],['test2','Test2',False]])
         menus = [menu1,menu2,menu3]
 
-        campaignInterface = Interface(gameMap,menus)
-        campaignGameMode = GameMode(campaignInterface,self._players,gameMap,UnitManager())
-        campaignMode = ["campaign","Start a new campaign",campaignGameMode]
-
-        #Setting game modes
-        self._gameModes = dict( campaign =  campaignMode,
-                                options =   ["options","Options",None],
-                                exit =      ["exit","Leave the game",None])
-
-        #Constructing main menu game mode
-        self._mainMenu = ["mainMenu","Main menu",MainMenu(self.gameModes)]
+        self.gameModes["campaign"][2].interface.menus = menus
 
     #accessors
     def _get_gameModes(self):

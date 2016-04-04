@@ -23,6 +23,25 @@ class GameMode:
         self._playerTransition = Transition("ressources/interface/playerTransition.png")
         self._turn = 0
 
+    #accessors
+    def _get_interface(self):
+        return self._interface
+
+    #mutators
+    def _set_interface(self, interface:Interface):
+        self._interface = interface
+
+    #destructors
+    def _del_interface(self):
+        del self._interface
+
+    #help
+    def _help_interface(self):
+        return "Interface of the game mode as Interface object"
+
+    #properties
+    interface = property(_get_interface,_set_interface,_del_interface,_help_interface)
+
     #Methods
     def nextPlayer(self):
         count = 0
@@ -105,7 +124,10 @@ class GameMode:
                 onInterface = self._interface.isOnInterface(pygame.mouse.get_pos())
                 if onInterface:
                     if event.type == MOUSEBUTTONDOWN:
-                        self._interface.actions(event)
+                        gameMode = self._interface.actions(event)
+                        print("gameMode: "+str(gameMode))
+                        if gameMode != None:
+                            running = False
                 else:
                     if event.type == MOUSEBUTTONDOWN:
                         self._interface.actions(event)
@@ -154,7 +176,7 @@ class GameMode:
             #update Display
             pygame.display.flip()
 
-        for player in self._players:
-            self._unitManager.removeAllUnits(player)
+        #for player in self._players:
+            #self._unitManager.removeAllUnits(player)
 
-        return "mainMenu"
+        return gameMode

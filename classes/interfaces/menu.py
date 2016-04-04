@@ -76,6 +76,7 @@ class Menu:
 
     #Methods
     def mouseOverEntry(self,mousePosition):
+        collision = False
         entryCount = 0
         for entry in self.entries:
             entryPosition = (self.position[0],self.position[1]+64+entryCount*self._fontSize)
@@ -84,9 +85,21 @@ class Menu:
 
             if rect.collidepoint(mousePosition):
                 entry[2] = True
+                collision = True
             else:
                 entry[2] = False
+            entryCount += 1
+        return collision
 
+    def actions(self, event:pygame.event):
+        entryCount = 0
+        for entry in self.entries:
+            entryPosition = (self.position[0],self.position[1]+64+entryCount*self._fontSize)
+            text = pygame.font.Font(self._font,self._fontSize).render(entry[0],16,(0,0,0))
+            rect = text.get_rect(topleft=entryPosition,width=text.get_width(),height=text.get_height())
+
+            if rect.collidepoint(event.pos):
+                return entry[0]
             entryCount += 1
 
     def show(self,window:pygame.display):

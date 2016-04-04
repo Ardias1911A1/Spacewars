@@ -24,9 +24,10 @@ class Interface:
         self._menus = menus
 
         menuCount = 0
-        for menu in self._menus:
-            menu.position = (menuCount*64,0)
-            menuCount += 1
+        if self._menus != None:
+            for menu in self._menus:
+                menu.position = (menuCount*64,0)
+                menuCount += 1
 
     #accessors
     def _get_topInterface(self):
@@ -49,6 +50,11 @@ class Interface:
         self._miniMap = miniMap
     def _set_menus(self, menus:list):
         self._menus = menus
+        menuCount = 0
+        for menu in self._menus:
+            menu.position = (menuCount*64,0)
+            menuCount += 1
+
 
     #destructors
     def _del_topInterface(self):
@@ -103,18 +109,28 @@ class Interface:
             if rect.collidepoint(position):
                 collision = True
 
+        for menu in self.menus:
+            if menu.active:
+                collision = menu.mouseOverEntry(position)
+
         return collision
 
     #Recieve events from the player via gamemode and execute interface's actions (example: menu clic)
-    def actions(self,event):
+    def actions(self,event:pygame.event):
+        action = None
         #Check if clic is on a menu
         for menu in self._menus:
             rect = menu.icon.get_rect(topleft=menu.position,width=menu.icon.get_width(), height=menu.icon.get_height())
+
+            if menu.active:
+                action = menu.actions(event)
+
             if rect.collidepoint(event.pos):
                 menu.active = True
             else:
                 menu.active = False
 
+        return action
 
     def show(self, window:pygame.display):
         #Backgrounds of the interface
