@@ -79,13 +79,13 @@ class GameMode:
             #Checks if mouse on screen side and if we must move the map
             mousePosition = pygame.mouse.get_pos()
             if mousePosition[1] <= 5:
-                self._gameMap.moveMap("up")
+                self._gameMap.moveMap("up",window)
             if mousePosition[1] >= resolution[1]-5:
-                self._gameMap.moveMap("down")
+                self._gameMap.moveMap("down",window)
             if mousePosition[0] <= 5:
-                self._gameMap.moveMap("left")
+                self._gameMap.moveMap("left",window)
             if mousePosition[0] >= resolution[0]-5:
-                self._gameMap.moveMap("right")
+                self._gameMap.moveMap("right",window)
 
             #Events
             for event in pygame.event.get():
@@ -106,13 +106,13 @@ class GameMode:
                         rangeType = "attack"
 
                     elif event.key == K_UP:
-                        self._gameMap.moveMap("up")
+                        self._gameMap.moveMap("up",window)
                     elif event.key == K_DOWN:
-                        self._gameMap.moveMap("down")
+                        self._gameMap.moveMap("down",window)
                     elif event.key == K_LEFT:
-                        self._gameMap.moveMap("left")
+                        self._gameMap.moveMap("left",window)
                     elif event.key == K_RIGHT:
-                        self._gameMap.moveMap("right")
+                        self._gameMap.moveMap("right",window)
 
                     elif event.key == K_RETURN:
                         displayTransition = True

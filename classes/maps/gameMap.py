@@ -239,7 +239,7 @@ class GameMap:
         return (xAxis,yAxis)
 
     #Used to move map around to display off screen parts
-    def moveMap(self, direction:str):
+    def moveMap(self, direction:str,window):
         if direction == "up":
             move = (0,self.scale[1]/10)
         elif direction == "down":
@@ -251,15 +251,21 @@ class GameMap:
         else:
             move = (0,0)
 
-        self._mapAnchorage = (self._mapAnchorage[0]+move[0], self._mapAnchorage[1]+move[1])
+        mapWidth = self.width*self.scale[0]
+        mapHeight = self.height*self.scale[1]
 
-        for player in self.players:
-            if len(player.units) > 0:
-                for unit in player.units:
-                    position = (unit.position[0]+move[0],unit.position[1]+move[1])
-                    position = (unit.position[0]+move[0],unit.position[1]+move[1])
-                    unit.position = position
-                    unit.destination = unit.position
+        #move map only if there is off screen elements to show
+        if (self._mapAnchorage[0]+move[0] <= 0 and self._mapAnchorage[1]+move[1] <= 0 and
+            self._mapAnchorage[0]+move[0] >= -1*(mapWidth-window.get_width()) and self._mapAnchorage[1]+move[1] >= -1*(mapHeight-window.get_height())):
+            self._mapAnchorage = (self._mapAnchorage[0]+move[0], self._mapAnchorage[1]+move[1])
+
+            for player in self.players:
+                if len(player.units) > 0:
+                    for unit in player.units:
+                        position = (unit.position[0]+move[0],unit.position[1]+move[1])
+                        position = (unit.position[0]+move[0],unit.position[1]+move[1])
+                        unit.position = position
+                        unit.destination = unit.position
 
     def actions(self, event):
         print("Map : "+str(event))
