@@ -8,12 +8,14 @@
 import pygame
 
 from classes.definitions.constants import *
+from classes.tile_manager.tileset import Tileset
 
 class Menu:
     def __init__(self,name:str,icon:str=None,entries:list=None,position:tuple=(0,0)):
         self._name = name
         self._position = position
         self._icon = pygame.image.load(icon).convert_alpha()
+        self._menuEntryBackground = Tileset("Menu entry background","ressources/interface/menuEntryBackground.png", (200,100))
         self._entries = entries
         self._active = False
         self._font = DEFAULT_FONT
@@ -109,5 +111,18 @@ class Menu:
                 text = pygame.font.Font(self._font,self._fontSize).render(entry[0],16,(0,200,0))
             else:
                 text = pygame.font.Font(self._font,self._fontSize).render(entry[0],16,(200,0,0))
-            window.blit(text,(self.position[0],self.icon.get_height()+entryCount*self._fontSize+2))
+
+            if entryCount == 0:
+                entryBackground = self._menuEntryBackground.tileTable[0]
+            elif entryCount == len(self.entries)-1:
+                entryBackground = self._menuEntryBackground.tileTable[2]
+            else:
+                entryBackground = self._menuEntryBackground.tiletable[1]
+
+            entryPosition = (self.position[0],self.icon.get_height()+entryCount*self._fontSize+2)
+
+            entryBackground = pygame.transform.scale(entryBackground,(100,16))
+
+            window.blit(entryBackground,entryPosition)
+            window.blit(text,entryPosition)
             entryCount += 1
