@@ -52,7 +52,7 @@ class MainMenu:
             window.blit(planet,ANCHOR_AT_00)
             window.blit(title, titlePosition)
             entrySpacing = resolution[1]//10
-            totalEntriesOn2 = len(self._entries)//2
+            totalEntriesOn2 = len(self._entries)//3
             entryYPosition = screenYCenter - (entrySpacing*totalEntriesOn2)
             pointerPosition = pygame.mouse.get_pos()
             count = 0
