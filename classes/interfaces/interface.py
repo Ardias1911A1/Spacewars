@@ -23,6 +23,7 @@ class Interface:
         self._fontSize = 12
         self._menus = menus
 
+        #Configuring menus
         menuCount = 0
         if self._menus != None:
             for menu in self._menus:
@@ -120,7 +121,7 @@ class Interface:
         action = None
         #Check if clic is on a menu
         for menu in self._menus:
-            rect = menu.icon.get_rect(topleft=menu.position,width=menu.icon.get_width(), height=menu.icon.get_height())
+            rect = menu.icon.get_rect(topleft=menu.position,width=menu.iconSize[0], height=menu.iconSize[1])
 
             if menu.active:
                 action = menu.actions(event)
@@ -156,9 +157,11 @@ class Interface:
         #window.blit(self._bottomInterfaceImage,self._bottomInterfacePosition)
 
         #Shows menus
+        iconSize = (int(topResolution[0]/50),topResolution[1])
         for menu in self.menus:
+            menu.iconSize = iconSize
             menuPosition = menu.position
-            icon = menu.icon
+            icon = pygame.transform.scale(menu.icon,iconSize)
             window.blit(icon, menuPosition)
             #Showing menu entries
             if menu.active:
