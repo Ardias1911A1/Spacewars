@@ -136,10 +136,10 @@ class Interface:
         #Backgrounds of the interface
         windowResolution = (window.get_width(),window.get_height())
 
-        windowHeightOn10 = int(windowResolution[1]/10)
+        windowHeightOn30 = int(windowResolution[1]/30)
         windowHeightOn5 = int(windowResolution[1]/5)
 
-        topResolution = (windowResolution[0],windowHeightOn10)
+        topResolution = (windowResolution[0],windowHeightOn30)
         bottomResolution = (windowResolution[0],windowHeightOn5)
 
         #scaling images if they are different from the current resolution
