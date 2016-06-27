@@ -153,7 +153,7 @@ class Interface:
 
         #Shows Backgrounds
         window.blit(self._topInterfaceImage,self._topInterfacePosition)
-        window.blit(self._bottomInterfaceImage,self._bottomInterfacePosition)
+        #window.blit(self._bottomInterfaceImage,self._bottomInterfacePosition)
 
         #Shows menus
         for menu in self.menus:

@@ -32,6 +32,7 @@ class MainMenu:
     #Methods
     def show(self, window: pygame.display):
         resolution = (window.get_width(), window.get_height())
+        pos = 0
         while(True):
             #Defining various screen coordinats from game's resolution in order
             #to dynamically place the menu's elements and preparing is assets
