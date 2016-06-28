@@ -89,16 +89,14 @@ class Interface:
 
         for unit in units:
             if unit.selected:
-                currentHealth = unit.health - unit.damages
-                maxHealth = unit.health
 
-                infos = ("Health : "+str(currentHealth)+" / "+str(maxHealth),"Move range : "+str(unit.ranges["move"]))
-                count = 0
-                for text in infos:
-                    coordinates = (position[0],position[1]+self._fontSize*count)
-                    entry = pygame.font.Font(self._font,self._fontSize).render(text,16,(0,255,0))
-                    window.blit(entry,coordinates)
-                    count += 1
+                #health bar
+                currentHealth = unit.health - unit.damages
+                healthArc = 2.0+(currentHealth/unit.health*2.2)
+
+                unitRect = unit.sprite.get_rect(topleft=unit.position)
+                pygame.draw.arc(window, (255,0,0), unitRect, 2.0, 4.2, 10)
+                pygame.draw.arc(window, (0,255,0), unitRect, 2.0, healthArc, 10)
 
     def isOnInterface(self, position:tuple):
         interfacePositions = []
