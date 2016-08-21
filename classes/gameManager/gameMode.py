@@ -167,7 +167,7 @@ class GameMode:
                 self._interface.show(window)
                 for player in self._players:
                     if player.active:
-                        self._interface.displayUnitInfos(window, player.units)
+                        self._interface.displayUnitInfos(window, player.units,self._gameMap.scaling)
 
 
             #update Display

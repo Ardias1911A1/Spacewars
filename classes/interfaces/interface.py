@@ -83,18 +83,17 @@ class Interface:
     miniMap =           property(_get_miniMap,_set_miniMap,_del_miniMap,_help_miniMap)
     menus =             property(_get_menus,_set_menus,_del_menus,_help_menus)
 
-    def displayUnitInfos(self,window:pygame.display, units:list):
+    def displayUnitInfos(self,window:pygame.display, units:list, scaling:float=1.0):
         windowResolution = (window.get_width(),window.get_height())
         position = (10,int(windowResolution[1]*5/6))
 
         for unit in units:
             if unit.selected:
-
                 #health bar
                 currentHealth = unit.health - unit.damages
                 healthArc = 2.0+(currentHealth/unit.health*2.2)
 
-                unitRect = unit.sprite.get_rect(topleft=unit.position)
+                unitRect = unit.sprite.get_rect(topleft=unit.position,width=unit.sprite.get_width()*scaling, height=unit.sprite.get_height()*scaling)
                 pygame.draw.arc(window, (255,0,0), unitRect, 2.0, 4.2, 10)
                 pygame.draw.arc(window, (0,255,0), unitRect, 2.0, healthArc, 10)
 
