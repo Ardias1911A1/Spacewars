@@ -97,6 +97,13 @@ class Interface:
                 pygame.draw.arc(window, (255,0,0), unitRect, 2.0, 4.2, 10)
                 pygame.draw.arc(window, (0,255,0), unitRect, 2.0, healthArc, 10)
 
+                actionButton = pygame.image.load("ressources/interface/actionButton.png").convert_alpha()
+                actionButton = pygame.transform.scale(actionButton,(64,64))
+
+                buttonPosition = (unit.position[0]+unitRect.width,unit.position[1])
+
+                window.blit(actionButton,buttonPosition)
+
     def isOnInterface(self, position:tuple):
         interfacePositions = []
         interfacePositions.append(self._topInterfaceImage.get_rect(topleft=self._topInterfacePosition,width=self._topInterfaceImage.get_width(), height=self._topInterfaceImage.get_height()))
